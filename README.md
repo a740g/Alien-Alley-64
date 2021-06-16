@@ -4,9 +4,10 @@ a740g - 11:35 PM 6/16/2021
 
 Original Readme follows...
 
-============================
-||  A L I E N  A L L E Y  ||
-============================
+
+ALIEN ALLEY
+===========
+
 Release 1.0
 November 13, 1994
 
