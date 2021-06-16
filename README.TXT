@@ -1,19 +1,6 @@
-Ah... After a long long time, I got my paws wet in the land of
-programming. How exciting! Anyways, this is a
-FreeBASIC/Allegro/Win32 port/conversion of the Alien Alley
-game by Dave Roberts. The same game that came with the book PC
-Game Programming Explorer. I bought this book a long time ago
-and indeed what a wonderful book it is. The original game was
-written in C for DOS. The conversion was not very simple
-though. A lot has changed in the code. If you want to compile
-the code, you will need FreeBASIC and FBEdit. Notice, that the
-game now runs in 640x480x8 display mode. As usual, I do not
-accept responsibility for any effects, adverse or otherwise,
-that this code may have on you, your computer, your sanity,
-your dog, and anything else that you can think of. Use it at
-your own risk. 
+Ah... After a long long time, I got my paws wet in the land of programming. How exciting! This is a FreeBASIC/Allegro 4/Win32 port/conversion of the Alien Alley game by Dave Roberts. The same game that came with the book PC Game Programming Explorer. I bought this book a long time ago and indeed what a wonderful book it is. The original game was written in C for DOS. The conversion was not very simple though. A lot has changed in the code. If you want to compile the code, you will need [FreeBASIC](https://github.com/freebasic/fbc) and FBEdit (use something newer like [WinFBE](https://github.com/PaulSquires/WinFBE) or [VisualFBEditor](https://github.com/XusinboyBekchanov/VisualFBEditor)). Notice, that the game now runs in 640x480x8 display mode. As usual, I do not accept responsibility for any effects, adverse or otherwise, that this code may have on you, your computer, your sanity, your dog, and anything else that you can think of. Use it at your own risk. 
 
-SaM - 7:29 AM 7/28/2010
+a740g - 11:35 PM 6/16/2021
 
 Original Readme follows...
 
