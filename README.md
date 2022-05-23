@@ -6,11 +6,11 @@ This is a QB64 conversion of the Alien Alley game by Dave Roberts. Yes, I conver
 
 This conversion has multiple improvements over the FreeBASIC version:
 
-1. There is no dependency on external libraries (the FB version depended on Allegro 4)
+1. There are no dependencies on external libraries (the FB version depended on Allegro 4)
 2. The game now uses native QB64 graphics and sound functions
-3. MIDI player is impemented as a C header library that can be directly used by the QB64 compiler
+3. A MIDI player is implemented as a C header library that can be directly used by the QB64 compiler
 4. MIDI uses the Win32 WinMM MIDI streaming API
-5. A PCX loader is now implemented in QB64
+5. A PCX loader is implemented using QB64 code
 6. The game now runs in 32BPP mode
 7. The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
 8. Alt+Enter puts the game in window mode
