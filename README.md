@@ -2,19 +2,25 @@
 
 ![Screenshot](screenshot.png)
 
-This is a QB64 conversion of the Alien Alley game by Dave Roberts. Yes, I converted the code again! This time from FreeBASIC to QB64. My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view). The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip)
+This is a QB64 conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
-This conversion has multiple improvements over the FreeBASIC version:
+Yes, I converted the code again! This time from FreeBASIC to QB64.
 
-1. There are no dependencies on external libraries (the FB version depended on Allegro 4)
-2. The game now uses native QB64 graphics and sound functions
-3. A MIDI player is implemented as a C header library that can be directly used by the QB64 compiler
-4. MIDI uses the Win32 WinMM MIDI streaming API
-5. A PCX loader is implemented using QB64 code
-6. The game now runs in 32BPP mode
-7. The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
-8. Alt+Enter puts the game in window mode
-9. Comments are modified to make sense for QB64 and are no longer just a copy from the original C code
+My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view).
+
+The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip)
+
+This conversion has multiple improvements over the FreeBASIC version. These are:
+
+- There are no dependencies on external libraries (the FB version depended on Allegro 4)
+- The game now uses native QB64 graphics and sound functions
+- A MIDI player is implemented as a C header library that can be directly used by the QB64 compiler
+- MIDI uses the Win32 WinMM MIDI streaming API
+- A PCX loader is implemented using QB64 code
+- The game now runs in 32BPP mode
+- The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
+- Alt+Enter puts the game in window mode
+- Comments are modified to make sense for QB64 and are no longer just a copy from the original C code
 
 As usual, I do not accept responsibility for any effects, adverse or otherwise, that this code may have on you, your computer, your sanity, your dog, and anything else that you can think of. Use it at your own risk.
 
@@ -106,8 +112,11 @@ DMKIT.ZIP also includes all the files necessary to develop an application around
 ### COPYRIGHTS
 
 Alien Alley, Copyright 1994, David G. Roberts, All Rights Reserved
+
 Original music, Copyright 1994, James J. Black, All Rights Reserved
+
 Original artwork, Copyright 1994, Kevin Long
+
 General MIDI patches (c) 1994 The Fat Man and K. Weston Phelan
 
 ### REDISTRIBUTION
