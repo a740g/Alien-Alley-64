@@ -8,16 +8,16 @@ Yes, I converted the code again! This time from FreeBASIC to QB64.
 
 My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view).
 
-The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip)
+The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip).
 
 This conversion has multiple improvements over the FreeBASIC version. These are:
 
-- There are no dependencies on external libraries (the FB version depended on Allegro 4)
+- There are no dependencies on external libraries (the FB version required Allegro 4)
 - The game now uses native QB64 graphics and sound functions
 - A MIDI player is implemented as a C header library that can be directly used by the QB64 compiler
 - MIDI uses the Win32 WinMM MIDI streaming API
 - A PCX loader is implemented using QB64 code
-- The game now runs in 32BPP mode
+- The game now runs in 32bpp mode (the FB version ran at 8bpp)
 - The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
 - Alt+Enter puts the game in window mode
 - Comments are modified to make sense for QB64 and are no longer just a copy from the original C code
