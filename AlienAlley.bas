@@ -217,7 +217,7 @@ Dim Shared HUDDigitBitmap(0 To 9) As Long
 '-----------------------------------------------------------------------------------------------------
 Dim Quit As Bit
 Dim DrawTitle As Bit
-Dim k As Unsigned Integer
+Dim k As Unsigned Long
 
 ' We want the title page to show the first time
 DrawTitle = TRUE
@@ -237,7 +237,7 @@ While Not Quit
     End If
 
     ' Get a key from the user
-    k = GetKey
+    k = KeyHit
 
     ' Check what key was press and action it
     Select Case k
@@ -422,34 +422,17 @@ Function RectanglesCollide` (r1 As RectangleType, r2 As RectangleType)
 End Function
 
 
-' Get a 1 or 2 byte keycode from the keyboard buffer
-Function GetKey~%
-    Dim k As String, i As Byte
-
-    k = InKey$
-    i = Len(k)
-
-    If i = 2 Then
-        GetKey = 256 + Asc(k, 2)
-    ElseIf i = 1 Then
-        GetKey = Asc(k)
-    Else
-        GetKey = NULL
-    End If
-End Function
-
-
 ' Sleeps until the user presses a key on the keyboard
 Sub WaitKeyPress
     Do
         Sleep
-    Loop While GetKey = NULL
+    Loop While KeyHit = NULL
 End Sub
 
 
 ' Clear the keyboard buffer
 Sub ClearKeyboard
-    While GetKey <> NULL
+    While KeyHit <> NULL
     Wend
 End Sub
 
@@ -974,7 +957,7 @@ Sub DisplayHighScoresScreen
 
         Display
         Limit UPDATES_PER_SECOND
-    Loop While GetKey = NULL
+    Loop While KeyHit = NULL
 
     ' Fade out
     Fade TRUE
@@ -1026,7 +1009,7 @@ Sub NewHighScore (NewScore As Long)
         DrawHighScores
         PrintString (x, y), Chr$(179)
 
-        k = GetKey
+        k = KeyHit
         If k >= 32 And k <= 126 And sPos < HIGH_SCORE_TEXT_LEN Then
             Asc(HighScore(i).text, sPos + 1) = k
             sPos = sPos + 1
