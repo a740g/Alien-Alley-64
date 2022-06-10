@@ -2,21 +2,20 @@
 
 ![Screenshot](screenshot.png)
 
-This is a QB64 conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
+This is a [QB64](https://github.com/QB64-Phoenix-Edition/QB64pe) conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
-Yes, I converted the code again! This time from FreeBASIC to QB64.
+Yes, I converted the code again! This time from [FreeBASIC](https://github.com/freebasic/fbc) to [QB64](https://github.com/QB64-Phoenix-Edition/QB64pe).
 
-My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view).
+My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view) or [here](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb).
 
 The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip).
 
 This conversion has multiple improvements over the FreeBASIC version. These are:
 
-- There are no dependencies on external libraries (the FB version required Allegro 4)
+- There are no dependencies on external libraries (the FB version required [Allegro](https://github.com/liballeg/allegro5))
 - The game now uses native QB64 graphics and sound functions
-- A MIDI player is implemented as a C header library that can be directly used by the QB64 compiler
-- MIDI uses the Win32 WinMM MIDI streaming API
-- A PCX loader is implemented using QB64 code
+- A MIDI player using the Win32 WinMM MIDI streaming API is implemented as a C header library that can be directly used by the QB64 compiler
+- An 8bpp PCX loader (with color keying) is implemented using QB64 code
 - The game now runs in 32bpp mode (the FB version ran at 8bpp)
 - The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
 - Alt+Enter puts the game in window mode
