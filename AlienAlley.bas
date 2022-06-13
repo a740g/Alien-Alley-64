@@ -38,90 +38,90 @@ $VersionInfo:PRODUCTVERSION#=2,2,0,0
 '-----------------------------------------------------------------------------------------------------
 ' CONSTANTS
 '-----------------------------------------------------------------------------------------------------
-Const FALSE` = 0`, TRUE` = Not FALSE
-Const NULL~` = 0~`
-Const NULLSTRING$ = ""
+Const FALSE = 0, TRUE = Not FALSE
+Const NULL = 0
+Const NULLSTRING = ""
 
 ' Game constants
-Const APP_NAME$ = "Alien Alley"
-Const MAX_ALIENS~%% = 4~%%
-Const MAX_ALIEN_MISSILES~%% = 20~%%
-Const MAX_HERO_MISSILES~%% = 10~%%
-Const MAX_EXPLOSIONS~%% = MAX_ALIENS + 1~%% ' +1 for hero
-Const MAX_EXPLOSION_BITMAPS~%% = 5~%%
-Const GUN_BLINK_RATE~%% = 20~%%
-Const GUN_BLINK_HERO_Y~% = 12~%
-Const GUN_BLINK_HERO_X1~% = 4~%
-Const GUN_BLINK_HERO_X2~% = 27~%
-Const GUN_BLINK_ALIEN_Y~% = 18~%
-Const GUN_BLINK_ALIEN_X1~% = 5~%
-Const GUN_BLINK_ALIEN_X2~% = 26~%
-Const HERO_X_VELOCITY~%% = 3~%%
-Const HERO_Y_VELOCITY~%% = 3~%%
-Const ALIEN_X_VELOCITY~%% = 3~%%
-Const ALIEN_Y_VELOCITY~%% = 2~%%
-Const HERO_MISSILE_VELOCITY~%% = 5~%%
-Const ALIEN_MISSILE_VELOCITY~%% = 4~%%
-Const ALIEN_MOVE_TIME_VAR~%% = 50~%%
-Const ALIEN_MOVE_TIME_BASE~%% = 20~%%
-Const ALIEN_GEN_RATE_BASE~%% = 40~%%
-Const ALIEN_GEN_RATE_VAR~%% = 40~%%
-Const ALIEN_FIRE_LOCKOUT~%% = 60~%%
-Const ALIEN_FIRE_PROB_HERO~%% = 20~%%
-Const ALIEN_FIRE_PROB_RANDOM~%% = 10~%%
-Const ALIEN_PROX_THRESHOLD~%% = 20~%%
-Const HERO_GUN_OFFSET_LEFT~%% = 3~%%
-Const HERO_GUN_OFFSET_RIGHT~%% = 26~%%
-Const HERO_GUN_OFFSET_UP~%% = 10~%%
-Const ALIEN_GUN_OFFSET_LEFT~%% = 4~%%
-Const ALIEN_GUN_OFFSET_RIGHT~%% = 25~%%
-Const ALIEN_GUN_OFFSET_DOWN~%% = 20~%%
-Const DEATH_DELAY~%% = 60~%% ' 1 sec delay after player death
-Const POINTS_PER_ALIEN~%% = 10~%%
-Const SHIELD_STATUS_WIDTH~% = 80~%
-Const SHIELD_STATUS_HEIGHT~% = 20~%
-Const SHIELD_STATUS_LEFT~% = 192~%
-Const SHIELD_STATUS_TOP~% = 360~%
-Const SHIELD_STATUS_RIGHT~% = SHIELD_STATUS_LEFT + SHIELD_STATUS_WIDTH - 1~%
-Const SHIELD_STATUS_BOTTOM~% = SHIELD_STATUS_TOP + SHIELD_STATUS_HEIGHT - 1~%
-Const MAX_HERO_SHIELDS~% = SHIELD_STATUS_WIDTH - 1~%
-Const SCORE_NUMBERS_LEFT~% = 474~%
-Const SCORE_NUMBERS_TOP~% = 363~%
-Const EXPLOSION_FRAME_REPEAT_COUNT~%% = 3~%%
-Const HIGH_SCORE_TEXT_LEN~%% = 20~%%
-Const HIGH_SCORE_FILENAME$ = "highscore.csv"
-Const NUM_HIGH_SCORES~%% = 10~%%
-Const TILE_WIDTH~% = 32~% ' in pixels
-Const TILE_HEIGHT~% = 32~%
-Const NUM_TILES~%% = 3~%%
-Const UPDATES_PER_SECOND~%% = 60~%%
+Const APP_NAME = "Alien Alley"
+Const MAX_ALIENS = 4
+Const MAX_ALIEN_MISSILES = 20
+Const MAX_HERO_MISSILES = 10
+Const MAX_EXPLOSIONS = MAX_ALIENS + 1 ' +1 for hero
+Const MAX_EXPLOSION_BITMAPS = 5
+Const GUN_BLINK_RATE = 20
+Const GUN_BLINK_HERO_Y = 12
+Const GUN_BLINK_HERO_X1 = 4
+Const GUN_BLINK_HERO_X2 = 27
+Const GUN_BLINK_ALIEN_Y = 18
+Const GUN_BLINK_ALIEN_X1 = 5
+Const GUN_BLINK_ALIEN_X2 = 26
+Const HERO_X_VELOCITY = 3
+Const HERO_Y_VELOCITY = 3
+Const ALIEN_X_VELOCITY = 3
+Const ALIEN_Y_VELOCITY = 2
+Const HERO_MISSILE_VELOCITY = 5
+Const ALIEN_MISSILE_VELOCITY = 4
+Const ALIEN_MOVE_TIME_VAR = 50
+Const ALIEN_MOVE_TIME_BASE = 20
+Const ALIEN_GEN_RATE_BASE = 40
+Const ALIEN_GEN_RATE_VAR = 40
+Const ALIEN_FIRE_LOCKOUT = 60
+Const ALIEN_FIRE_PROB_HERO = 20
+Const ALIEN_FIRE_PROB_RANDOM = 10
+Const ALIEN_PROX_THRESHOLD = 20
+Const HERO_GUN_OFFSET_LEFT = 3
+Const HERO_GUN_OFFSET_RIGHT = 26
+Const HERO_GUN_OFFSET_UP = 10
+Const ALIEN_GUN_OFFSET_LEFT = 4
+Const ALIEN_GUN_OFFSET_RIGHT = 25
+Const ALIEN_GUN_OFFSET_DOWN = 20
+Const DEATH_DELAY = 60 ' 1 sec delay after player death
+Const POINTS_PER_ALIEN = 10
+Const SHIELD_STATUS_WIDTH = 80
+Const SHIELD_STATUS_HEIGHT = 20
+Const SHIELD_STATUS_LEFT = 192
+Const SHIELD_STATUS_TOP = 360
+Const SHIELD_STATUS_RIGHT = SHIELD_STATUS_LEFT + SHIELD_STATUS_WIDTH - 1
+Const SHIELD_STATUS_BOTTOM = SHIELD_STATUS_TOP + SHIELD_STATUS_HEIGHT - 1
+Const MAX_HERO_SHIELDS = SHIELD_STATUS_WIDTH - 1
+Const SCORE_NUMBERS_LEFT = 474
+Const SCORE_NUMBERS_TOP = 363
+Const EXPLOSION_FRAME_REPEAT_COUNT = 3
+Const HIGH_SCORE_TEXT_LEN = 20
+Const HIGH_SCORE_FILENAME = "highscore.csv"
+Const NUM_HIGH_SCORES = 10
+Const TILE_WIDTH = 32 ' in pixels
+Const TILE_HEIGHT = 32
+Const NUM_TILES = 3
+Const UPDATES_PER_SECOND = 60
 ' Screen parameters
-Const SCREEN_WIDTH~% = 640~%
-Const SCREEN_HEIGHT~% = 400~%
-Const STATUS_HEIGHT~% = 60~% ' our hud is 60 pixels now 30 * 2 in 640x400 mode
-Const REDUCED_SCREEN_HEIGHT~% = SCREEN_HEIGHT - STATUS_HEIGHT
+Const SCREEN_WIDTH = 640
+Const SCREEN_HEIGHT = 400
+Const STATUS_HEIGHT = 60 ' our hud is 60 pixels now 30 * 2 in 640x400 mode
+Const REDUCED_SCREEN_HEIGHT = SCREEN_HEIGHT - STATUS_HEIGHT
 ' Scrolling parameters
-Const MAP_SCROLL_STEP_NORMAL~%% = 1~%%
-Const MAP_SCROLL_STEP_FAST~%% = 2~%%
+Const MAP_SCROLL_STEP_NORMAL = 1
+Const MAP_SCROLL_STEP_FAST = 2
 ' Keys that we use
-Const KEY_WL& = 119&
-Const KEY_WU& = 87&
-Const KEY_SL& = 115&
-Const KEY_SU& = 83&
-Const KEY_AL& = 97&
-Const KEY_AU& = 65&
-Const KEY_DL& = 100&
-Const KEY_DU& = 68&
-Const KEY_UP& = 18432&
-Const KEY_DOWN& = 20480&
-Const KEY_LEFT& = 19200&
-Const KEY_RIGHT& = 19712&
-Const KEY_SPACE& = 32&
-Const KEY_LCONTROL& = 100306&
-Const KEY_RCONTROL& = 100305&
-Const KEY_LALT& = 100308&
-Const KEY_RALT& = 100306&
-Const KEY_ESC& = 27&
+Const KEY_WL = 119
+Const KEY_WU = 87
+Const KEY_SL = 115
+Const KEY_SU = 83
+Const KEY_AL = 97
+Const KEY_AU = 65
+Const KEY_DL = 100
+Const KEY_DU = 68
+Const KEY_UP = 18432
+Const KEY_DOWN = 20480
+Const KEY_LEFT = 19200
+Const KEY_RIGHT = 19712
+Const KEY_SPACE = 32
+Const KEY_LCONTROL = 100306
+Const KEY_RCONTROL = 100305
+Const KEY_LALT = 100308
+Const KEY_RALT = 100306
+Const KEY_ESC = 27
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ End Sub
 
 
 ' Collision testing routine. This is a simple bounding box collision test
-Function RectanglesCollide` (r1 As RectangleType, r2 As RectangleType)
+Function RectanglesCollide%% (r1 As RectangleType, r2 As RectangleType)
     ' Leave if the rectangle do not collide
     If r1.a.x > r2.b.x Or r2.a.x > r1.b.x Or r1.a.y > r2.b.y Or r2.a.y > r1.b.y Then
         RectanglesCollide = FALSE
@@ -572,7 +572,7 @@ End Sub
 ' Updates the "UserInput..." variables used by the MoveSprites routine from supported input devices
 ' Return TRUE if ESC was pressed
 ' TODO: Add game controller support
-Function PollInput` (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
+Function PollInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
     Dim mouseMovement As Vector2DType
     Dim mouseFire As Bit
 
@@ -595,7 +595,7 @@ End Function
 
 ' Finds a non-active hero missile in the HeroMissile array and initializes it
 ' Return TRUE if it was successful
-Function CreateHeroMissile` (x As Integer, y As Integer)
+Function CreateHeroMissile%% (x As Integer, y As Integer)
     Dim i As Integer
 
     For i = 0 To MAX_HERO_MISSILES - 1
@@ -1323,7 +1323,7 @@ End Sub
 
 ' Erase all current bitmaps from the hidden screen
 ' If the erasure marks the last time that the object will be erased because it is no longer being drawn, deactivate the object
-Function EraseSprites`
+Function EraseSprites%%
     Dim i As Integer
     Static DeathCounter As Unsigned Integer
 
