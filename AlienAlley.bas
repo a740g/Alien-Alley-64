@@ -50,12 +50,6 @@ Const MAX_HERO_MISSILES = 10
 Const MAX_EXPLOSIONS = MAX_ALIENS + 1 ' +1 for hero
 Const MAX_EXPLOSION_BITMAPS = 5
 Const GUN_BLINK_RATE = 20
-Const GUN_BLINK_HERO_Y = 12
-Const GUN_BLINK_HERO_X1 = 4
-Const GUN_BLINK_HERO_X2 = 27
-Const GUN_BLINK_ALIEN_Y = 18
-Const GUN_BLINK_ALIEN_X1 = 5
-Const GUN_BLINK_ALIEN_X2 = 26
 Const HERO_X_VELOCITY = 3
 Const HERO_Y_VELOCITY = 3
 Const ALIEN_X_VELOCITY = 3
@@ -122,6 +116,17 @@ Const KEY_RCONTROL = 100305
 Const KEY_LALT = 100308
 Const KEY_RALT = 100306
 Const KEY_ESC = 27
+Const KEY_ENTER = 13
+Const KEY_BACKSPACE = 8
+Const KEY_TILDE = 126
+Const KEY_QL = 113
+Const KEY_QU = 81
+Const KEY_KL = 107
+Const KEY_KU = 75
+Const KEY_ML = 109
+Const KEY_MU = 77
+Const KEY_JL = 106
+Const KEY_JU = 74
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
@@ -193,12 +198,12 @@ Dim Shared HUDSize As Vector2DType
 Dim Shared HUDDigitSize As Vector2DType
 Dim Shared AlienGenCounter As Integer
 Dim Shared GunBlinkCounter As Integer
-Dim Shared GunBlinkState As Bit
-Dim Shared AllowHeroFire As Bit
+Dim Shared GunBlinkState As Byte
+Dim Shared AllowHeroFire As Byte
 ' Asset global variables
 Dim Shared ExplosionSound As Long ' sample handle
 Dim Shared LaserSound As Long ' sample handle
-Dim Shared GameMusic As Bit ' have we initialized the MIDI subsystem?
+Dim Shared GameMusic As Byte ' have we initialized the MIDI subsystem?
 Dim Shared HeroBitmap As Long
 Dim Shared AlienBitmap As Long
 Dim Shared MissileBitmap As Long
@@ -215,8 +220,8 @@ Dim Shared HUDDigitBitmap(0 To 9) As Long
 ' PROGRAM ENTRY POINT - Main program loop. Inits the program, draws intro screens and title pages,
 ' and waits for user to hit keystroke to indicated what they want to do
 '-----------------------------------------------------------------------------------------------------
-Dim Quit As Bit
-Dim DrawTitle As Bit
+Dim Quit As Byte
+Dim DrawTitle As Byte
 Dim k As Unsigned Long
 
 ' We want the title page to show the first time
@@ -225,8 +230,8 @@ DrawTitle = TRUE
 InitializeProgram
 ' Display the into credits screen
 DisplayIntroCredits
-' Clear the keyboard buffer
-ClearKeyboard
+' Clear keyboard and mouse
+ClearInput
 
 ' Main menu loop
 While Not Quit
@@ -241,16 +246,16 @@ While Not Quit
 
     ' Check what key was press and action it
     Select Case k
-        Case 27, Asc("q"), Asc("Q")
+        Case KEY_ESC, KEY_QL, KEY_QU
             Quit = TRUE
-        Case Asc("k"), Asc("K"), Asc("m"), Asc("M"), Asc("j"), Asc("J"), 13
+        Case KEY_KL, KEY_KU, KEY_ML, KEY_MU, KEY_JL, KEY_JU, KEY_ENTER
             RunGame
             NewHighScore Score
-            ClearKeyboard
+            ClearInput
             DrawTitle = TRUE
-        Case Asc("s"), Asc("S")
+        Case KEY_SL, KEY_SU
             DisplayHighScoresScreen
-            ClearKeyboard
+            ClearInput
             DrawTitle = TRUE
         Case Else
             DrawTitle = FALSE
@@ -262,7 +267,7 @@ Fade TRUE
 ' Release all resources
 FinalizeProgram
 
-System 0
+System
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
@@ -422,18 +427,11 @@ Function RectanglesCollide%% (r1 As RectangleType, r2 As RectangleType)
 End Function
 
 
-' Sleeps until the user presses a key on the keyboard
-Sub WaitKeyPress
-    Do
-        Sleep
-    Loop While KeyHit = NULL
-End Sub
-
-
-' Clear the keyboard buffer
-Sub ClearKeyboard
-    While KeyHit <> NULL
+' Chear mouse and keyboard events
+Sub ClearInput
+    While MouseInput
     Wend
+    KeyClear
 End Sub
 
 
@@ -574,13 +572,13 @@ End Sub
 ' TODO: Add game controller support
 Function PollInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
     Dim mouseMovement As Vector2DType
-    Dim mouseFire As Bit
+    Dim mouseFire As Byte
 
     ' Collect and aggregate mouse input
     While MouseInput
         mouseMovement.x = mouseMovement.x + MouseMovementX
         mouseMovement.y = mouseMovement.y + MouseMovementY
-        mouseFire = mouseFire Or MouseButton(1) Or MouseButton(2)
+        mouseFire = mouseFire Or MouseButton(1) Or MouseButton(2) Or MouseButton(3)
     Wend
 
     UserInputLeft = (mouseMovement.x < 0) Or KeyDown(KEY_LEFT) Or KeyDown(KEY_AU) Or KeyDown(KEY_AL)
@@ -950,14 +948,18 @@ Sub DisplayHighScoresScreen
     ' Fade in
     Fade FALSE
 
-    ClearKeyboard
+    ClearInput
 
     Do
         DrawHighScores
 
         Display
         Limit UPDATES_PER_SECOND
-    Loop While KeyHit = NULL
+
+        While MouseInput
+            If MouseButton(1) Or MouseButton(2) Or MouseButton(3) Then Exit Do
+        Wend
+    Loop While KeyHit <= NULL
 
     ' Fade out
     Fade TRUE
@@ -1001,7 +1003,7 @@ Sub NewHighScore (NewScore As Long)
     y = (FontHeight * 4) + i * FontHeight * 2
     x = 228
     sPos = 0
-    ClearKeyboard
+    ClearInput
     Color DeepSkyBlue
 
     ' Get user text string
@@ -1010,19 +1012,19 @@ Sub NewHighScore (NewScore As Long)
         PrintString (x, y), Chr$(179)
 
         k = KeyHit
-        If k >= 32 And k <= 126 And sPos < HIGH_SCORE_TEXT_LEN Then
+        If k >= KEY_SPACE And k <= KEY_TILDE And sPos < HIGH_SCORE_TEXT_LEN Then
             Asc(HighScore(i).text, sPos + 1) = k
             sPos = sPos + 1
             x = x + FontWidth
-        ElseIf k = 8 And sPos > 0 Then
-            Asc(HighScore(i).text, sPos) = 32
+        ElseIf k = KEY_BACKSPACE And sPos > 0 Then
+            Asc(HighScore(i).text, sPos) = KEY_SPACE
             sPos = sPos - 1
             x = x - FontWidth
         End If
 
         Display
         Limit UPDATES_PER_SECOND
-    Loop While k <> 13
+    Loop While k <> KEY_ENTER
 
     ' Fade to black...
     Fade TRUE
@@ -1389,20 +1391,24 @@ Sub BlinkGuns (bRed As Byte)
     ' Now just set the pixels with the color we want
     Dest HeroBitmap
     If bRed Then
-        PSet (GUN_BLINK_HERO_X1, GUN_BLINK_HERO_Y), NP_Red
-        PSet (GUN_BLINK_HERO_X2, GUN_BLINK_HERO_Y), NP_Red
+        PSet (4, 12), NP_Red
+        PSet (27, 12), NP_Red
+        PSet (15, 30), Black
+        PSet (16, 30), Black
     Else
-        PSet (GUN_BLINK_HERO_X1, GUN_BLINK_HERO_Y), Black
-        PSet (GUN_BLINK_HERO_X2, GUN_BLINK_HERO_Y), Black
+        PSet (4, 12), Black
+        PSet (27, 12), Black
+        PSet (15, 30), NP_Red
+        PSet (16, 30), NP_Red
     End If
 
     Dest AlienBitmap
     If Not bRed Then
-        PSet (GUN_BLINK_ALIEN_X1, GUN_BLINK_ALIEN_Y), NP_Red
-        PSet (GUN_BLINK_ALIEN_X2, GUN_BLINK_ALIEN_Y), NP_Red
+        PSet (5, 18), NP_Red
+        PSet (26, 18), NP_Red
     Else
-        PSet (GUN_BLINK_ALIEN_X1, GUN_BLINK_ALIEN_Y), Black
-        PSet (GUN_BLINK_ALIEN_X2, GUN_BLINK_ALIEN_Y), Black
+        PSet (5, 18), Black
+        PSet (26, 18), Black
     End If
 
     Dest oldDest
@@ -1518,8 +1524,7 @@ End Sub
 
 ' Run the game!
 Sub RunGame
-    Dim As Byte UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire
-    Dim As Bit GameOver
+    Dim As Byte UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire, GameOver
 
     ' Initialize all counters, etc.
     Score = 0
