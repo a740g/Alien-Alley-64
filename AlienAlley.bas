@@ -174,9 +174,9 @@ Declare Library "./MIDIPlayer"
     Function MIDIRegister& (mididata As String) ' Sets up and opens the WinMM MIDI stream - mididata here is string buffer!
     Sub MIDIUnregister ' Closes the WinMM MIDI stream
     Sub MIDIPlay (ByVal looping As Long) ' Kickstarts MIDI stream playback
+    Sub MIDIStop ' Stops playing the MIDI file - this does not free resources!
     Sub MIDIPause ' Pauses a MIDI stream
     Sub MIDIResume ' Resumes a paused MIDI stream
-    Sub MIDIStop ' Stops playing the MIDI file - this does not free resources!
 End Declare
 '-----------------------------------------------------------------------------------------------------
 
@@ -203,7 +203,6 @@ Dim Shared AllowHeroFire As Byte
 ' Asset global variables
 Dim Shared ExplosionSound As Long ' sample handle
 Dim Shared LaserSound As Long ' sample handle
-Dim Shared GameMusic As Byte ' have we initialized the MIDI subsystem?
 Dim Shared HeroBitmap As Long
 Dim Shared AlienBitmap As Long
 Dim Shared MissileBitmap As Long
@@ -822,16 +821,16 @@ End Sub
 
 ' Loads and plays a MIDI file (loops it too)
 Sub PlayMIDIFile (fileName As String)
-    ' Check if the file exists
-    If FileExists(fileName) Then
-        ' Unload music if loaded
-        If GameMusic Then
-            MIDIStop
-            MIDIUnregister
-            MIDIDone
-            GameMusic = FALSE
-        End If
+    Static MIDILoaded As Byte ' Have we initialized the MIDI subsystem?
 
+    ' Unload if there is anything previously loaded
+    If MIDILoaded Then
+        MIDIDone
+        MIDILoaded = FALSE
+    End If
+
+    ' Check if the file exists
+    If fileName <> NULLSTRING And FileExists(fileName) Then
         Dim fh As Long
         Dim buffer As String
 
@@ -848,7 +847,7 @@ Sub PlayMIDIFile (fileName As String)
         ' Send the buffer for parsing and preperation
         If MIDIRegister(buffer) Then
             MIDIPlay TRUE ' loop the track
-            GameMusic = TRUE
+            MIDILoaded = TRUE
         End If
     End If
 End Sub
@@ -868,11 +867,7 @@ Sub FinalizeSound
     SndClose ExplosionSound
     SndClose LaserSound
 
-    If GameMusic Then
-        MIDIStop
-        MIDIUnregister
-        MIDIDone
-    End If
+    PlayMIDIFile NULLSTRING ' This is will unload whatever MIDI data is there in memory
 End Sub
 
 
@@ -1579,4 +1574,4 @@ Sub RunGame
     ' Fade to black...
     Fade TRUE
 End Sub
-
+'-----------------------------------------------------------------------------------------------------
