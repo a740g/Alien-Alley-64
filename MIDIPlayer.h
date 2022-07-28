@@ -17,8 +17,8 @@ typedef struct
 	int divisions; /* number of ticks per quarter note */
 	struct
 	{
-		unsigned char* data; /* MIDI message stream */
-		int len;             /* length of the track data */
+		unsigned char *data; /* MIDI message stream */
+		int len;			 /* length of the track data */
 	} track[MIDI_TRACKS];
 } MIDI;
 
@@ -27,9 +27,9 @@ static BOOL MusicLoaded = FALSE;
 static BOOL MusicLoop = FALSE;
 
 static HMIDISTRM hMidiStream;
-static MIDIEVENT* MidiEvents[MIDI_TRACKS];
+static MIDIEVENT *MidiEvents[MIDI_TRACKS];
 static MIDIHDR MidiStreamHdr;
-static MIDIEVENT* NewEvents;
+static MIDIEVENT *NewEvents;
 static int NewSize;
 static int NewPos;
 static int BytesRecorded[MIDI_TRACKS];
@@ -38,10 +38,10 @@ static int CurrentTrack;
 static int CurrentPos;
 
 // Some strings of bytes used in the MIDI format
-static BYTE midikey[] = { 0x00, 0xff, 0x59, 0x02, 0x00, 0x00 };               // C major
-static BYTE miditempo[] = { 0x00, 0xff, 0x51, 0x03, 0x09, 0xa3, 0x1a };       // uS/qnote
-static BYTE midihdr[] = { 'M', 'T', 'h', 'd', 0, 0, 0, 6, 0, 1, 0, 0, 0, 0 }; // header (length 6, format 1)
-static BYTE trackhdr[] = { 'M', 'T', 'r', 'k' };                              // track header
+static BYTE midikey[] = {0x00, 0xff, 0x59, 0x02, 0x00, 0x00};				// C major
+static BYTE miditempo[] = {0x00, 0xff, 0x51, 0x03, 0x09, 0xa3, 0x1a};		// uS/qnote
+static BYTE midihdr[] = {'M', 'T', 'h', 'd', 0, 0, 0, 6, 0, 1, 0, 0, 0, 0}; // header (length 6, format 1)
+static BYTE trackhdr[] = {'M', 'T', 'r', 'k'};								// track header
 
 //-----------------------------------------------------------------------------------------------------
 // INTERNAL LIBRARY FUNCTIONS
@@ -49,9 +49,9 @@ static BYTE trackhdr[] = { 'M', 'T', 'r', 'k' };                              //
 // Reads the length of a chunk in a midi buffer, advancing the pointer 4 bytes, bigendian
 // Passed a pointer to the pointer to a MIDI buffer
 // Returns the chunk length at the pointer position
-static size_t ReadLength(BYTE** mid)
+static size_t ReadLength(BYTE **mid)
 {
-	BYTE* midptr = *mid;
+	BYTE *midptr = *mid;
 	size_t length = (size_t)(*midptr++) << 24;
 	length += (size_t)(*midptr++) << 16;
 	length += (size_t)(*midptr++) << 8;
@@ -61,11 +61,10 @@ static size_t ReadLength(BYTE** mid)
 	return length;
 }
 
-
 // Convert an in-memory copy of a MIDI format 0 or 1 file to our custom MIDI structure, that is valid or has been zeroed
 // Passed a pointer to a memory buffer with MIDI format music in it
 // Returns TRUE if successful, FALSE if the buffer is not MIDI format
-static BOOL ConvertMIDI(BYTE* mid)
+static BOOL ConvertMIDI(BYTE *mid)
 {
 	int i;
 	int ntracks;
@@ -97,7 +96,7 @@ static BOOL ConvertMIDI(BYTE* mid)
 		mididata.track[i].len = (int)ReadLength(&mid); // get length, move mid past it
 
 		// read a track
-		unsigned char* tmp = (unsigned char*)realloc(mididata.track[i].data, mididata.track[i].len);
+		unsigned char *tmp = (unsigned char *)realloc(mididata.track[i].data, mididata.track[i].len);
 		if (tmp != nullptr)
 		{
 			mididata.track[i].data = tmp;
@@ -123,7 +122,6 @@ static BOOL ConvertMIDI(BYTE* mid)
 	return TRUE;
 }
 
-
 static int GetVL(void)
 {
 	int l = 0;
@@ -140,16 +138,15 @@ static int GetVL(void)
 	}
 }
 
-
 static void AddEvent(DWORD at, DWORD type, BYTE event, BYTE a, BYTE b)
 {
-	MIDIEVENT* CurEvent;
+	MIDIEVENT *CurEvent;
 
 	if ((BytesRecorded[CurrentTrack] + (int)sizeof(MIDIEVENT)) >= BufferSize[CurrentTrack])
 	{
 		BufferSize[CurrentTrack] += 100 * sizeof(MIDIEVENT);
 
-		MIDIEVENT* tmp = (MIDIEVENT*)realloc(MidiEvents[CurrentTrack], BufferSize[CurrentTrack]);
+		MIDIEVENT *tmp = (MIDIEVENT *)realloc(MidiEvents[CurrentTrack], BufferSize[CurrentTrack]);
 		if (tmp != nullptr)
 		{
 			MidiEvents[CurrentTrack] = tmp;
@@ -159,13 +156,12 @@ static void AddEvent(DWORD at, DWORD type, BYTE event, BYTE a, BYTE b)
 			return; // this should be handled in a better way
 		}
 	}
-	CurEvent = (MIDIEVENT*)((BYTE*)MidiEvents[CurrentTrack] + BytesRecorded[CurrentTrack]);
+	CurEvent = (MIDIEVENT *)((BYTE *)MidiEvents[CurrentTrack] + BytesRecorded[CurrentTrack]);
 	memset(CurEvent, 0, sizeof(MIDIEVENT));
 	CurEvent->dwDeltaTime = at;
 	CurEvent->dwEvent = event + (a << 8) + (b << 16) + (type << 24);
 	BytesRecorded[CurrentTrack] += 3 * sizeof(DWORD);
 }
-
 
 static void TrackToStream(void)
 {
@@ -278,7 +274,6 @@ static void TrackToStream(void)
 	}
 }
 
-
 static void BlockOut(void)
 {
 	MMRESULT err;
@@ -300,7 +295,7 @@ static void BlockOut(void)
 		BlockSize = (NewSize - NewPos);
 		if (BlockSize > 36000)
 			BlockSize = 36000;
-		MidiStreamHdr.lpData = (LPSTR)((BYTE*)NewEvents + NewPos);
+		MidiStreamHdr.lpData = (LPSTR)((BYTE *)NewEvents + NewPos);
 		NewPos += BlockSize;
 		MidiStreamHdr.dwBufferLength = BlockSize;
 		MidiStreamHdr.dwBytesRecorded = BlockSize;
@@ -312,12 +307,11 @@ static void BlockOut(void)
 	}
 }
 
-
 static void MIDItoStream(void)
 {
 	int BufferPos[MIDI_TRACKS];
-	MIDIEVENT* CurEvent;
-	MIDIEVENT* NewEvent;
+	MIDIEVENT *CurEvent;
+	MIDIEVENT *NewEvent;
 	int lTime;
 	int Dummy;
 	int Track;
@@ -339,7 +333,7 @@ static void MIDItoStream(void)
 		BufferPos[CurrentTrack] = 0;
 	}
 
-	MIDIEVENT* tmp = (MIDIEVENT*)realloc(NewEvents, NewSize);
+	MIDIEVENT *tmp = (MIDIEVENT *)realloc(NewEvents, NewSize);
 	if (tmp != nullptr)
 	{
 		NewEvents = tmp;
@@ -359,7 +353,7 @@ static void MIDItoStream(void)
 			for (CurrentTrack = MIDI_TRACKS - 1; CurrentTrack >= 0; CurrentTrack--)
 			{
 				if ((BytesRecorded[CurrentTrack] > 0) && (BufferPos[CurrentTrack] < BytesRecorded[CurrentTrack]))
-					CurEvent = (MIDIEVENT*)((BYTE*)MidiEvents[CurrentTrack] + BufferPos[CurrentTrack]);
+					CurEvent = (MIDIEVENT *)((BYTE *)MidiEvents[CurrentTrack] + BufferPos[CurrentTrack]);
 				else
 					continue;
 				if ((int)CurEvent->dwDeltaTime <= lTime)
@@ -372,9 +366,9 @@ static void MIDItoStream(void)
 				break;
 			else
 			{
-				CurEvent = (MIDIEVENT*)((BYTE*)MidiEvents[Track] + BufferPos[Track]);
+				CurEvent = (MIDIEVENT *)((BYTE *)MidiEvents[Track] + BufferPos[Track]);
 				BufferPos[Track] += 12;
-				NewEvent = (MIDIEVENT*)((BYTE*)NewEvents + NewPos);
+				NewEvent = (MIDIEVENT *)((BYTE *)NewEvents + NewPos);
 				memcpy(NewEvent, CurEvent, 12);
 				NewPos += 12;
 			}
@@ -383,7 +377,7 @@ static void MIDItoStream(void)
 		lTime = 0;
 		while (NewPos < NewSize)
 		{
-			NewEvent = (MIDIEVENT*)((BYTE*)NewEvents + NewPos);
+			NewEvent = (MIDIEVENT *)((BYTE *)NewEvents + NewPos);
 			Dummy = NewEvent->dwDeltaTime;
 			NewEvent->dwDeltaTime -= lTime;
 			lTime = Dummy;
@@ -402,7 +396,6 @@ static void MIDItoStream(void)
 		}
 	}
 }
-
 
 static void CALLBACK MidiProc(HMIDIIN hMidi, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 {
@@ -430,7 +423,6 @@ void MIDIPlay(BOOL looping)
 	}
 }
 
-
 // Pauses a MIDI stream
 void MIDIPause(void)
 {
@@ -438,14 +430,12 @@ void MIDIPause(void)
 		midiStreamPause(hMidiStream);
 }
 
-
 // Resumes a paused MIDI stream
 void MIDIResume(void)
 {
 	if (hMidiStream)
 		midiStreamRestart(hMidiStream);
 }
-
 
 // Stops playing the MIDI file - this does not free resources!
 void MIDIStop(void)
@@ -456,7 +446,6 @@ void MIDIStop(void)
 	midiStreamStop(hMidiStream);
 	midiOutReset((HMIDIOUT)hMidiStream);
 }
-
 
 // Closes the WinMM MIDI stream
 void MIDIUnregister(void)
@@ -471,15 +460,14 @@ void MIDIUnregister(void)
 	hMidiStream = 0;
 }
 
-
 // Sets up and opens the WinMM MIDI stream
-BOOL MIDIRegister(char* data)
+BOOL MIDIRegister(char *data)
 {
 	MMRESULT merr;
 	MIDIPROPTIMEDIV mptd;
 	UINT MidiDevice = MIDI_MAPPER;
 
-	if (!ConvertMIDI((BYTE*)data))
+	if (!ConvertMIDI((BYTE *)data))
 		return FALSE;
 
 	memset(&MidiStreamHdr, 0, sizeof(MIDIHDR));
@@ -496,7 +484,6 @@ BOOL MIDIRegister(char* data)
 
 	return TRUE;
 }
-
 
 // Frees allocated memory - this must be called once we are done with the MIDI (or else we will leak memory)
 void MIDIDone(void)
@@ -526,7 +513,6 @@ void MIDIDone(void)
 		NewEvents = NULL;
 	}
 }
-
 
 // Initializes stuff - call this before using the library
 void MIDIInit(void)
