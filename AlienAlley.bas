@@ -166,21 +166,6 @@ End Type
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
-' EXTERNAL LIBRARIES
-'-----------------------------------------------------------------------------------------------------
-Declare Library "./MIDIPlayer"
-    Sub MIDIInit ' Initializes stuff - call this before using the library
-    Sub MIDIDone ' Frees allocated memory - this must be called once we are done with the MIDI (or else we will leak memory)
-    Function MIDIRegister& (mididata As String) ' Sets up and opens the WinMM MIDI stream - mididata here is string buffer!
-    Sub MIDIUnregister ' Closes the WinMM MIDI stream
-    Sub MIDIPlay (ByVal looping As Long) ' Kickstarts MIDI stream playback
-    Sub MIDIStop ' Stops playing the MIDI file - this does not free resources!
-    Sub MIDIPause ' Pauses a MIDI stream
-    Sub MIDIResume ' Resumes a paused MIDI stream
-End Declare
-'-----------------------------------------------------------------------------------------------------
-
-'-----------------------------------------------------------------------------------------------------
 ' GLOBAL VARIABLES
 '-----------------------------------------------------------------------------------------------------
 Dim Shared Score As Long
@@ -821,41 +806,26 @@ End Sub
 
 ' Loads and plays a MIDI file (loops it too)
 Sub PlayMIDIFile (fileName As String)
-    Static MIDILoaded As Byte ' Have we initialized the MIDI subsystem?
+    Static MIDIHandle As Long ' Sound handle
 
     ' Unload if there is anything previously loaded
-    If MIDILoaded Then
-        MIDIDone
-        MIDILoaded = FALSE
+    If MIDIHandle > 0 Then
+        SndStop MIDIHandle
+        SndClose MIDIHandle
+        MIDIHandle = 0
     End If
 
     ' Check if the file exists
     If fileName <> NULLSTRING And FileExists(fileName) Then
-        Dim fh As Long
-        Dim buffer As String
-
-        ' Open the file
-        fh = FreeFile
-        Open fileName For Binary Access Read As fh
-
-        ' Load the whole file into memory
-        buffer = Input$(LOF(fh), fh)
-
-        ' Close the file
-        Close fh
-
-        ' Send the buffer for parsing and preperation
-        If MIDIRegister(buffer) Then
-            MIDIPlay TRUE ' loop the track
-            MIDILoaded = TRUE
-        End If
+        MIDIHandle = SndOpen(fileName, "stream")
+        ' Loop the MIDI file
+        If MIDIHandle > 0 Then SndLoop MIDIHandle
     End If
 End Sub
 
 
 ' Initialize sound stuff
 Sub InitializeSound
-    MIDIInit
     ' Load the sound effects
     ExplosionSound = SndOpen("dat/sfx/snd/explode.wav")
     LaserSound = SndOpen("dat/sfx/snd/laser.wav")
