@@ -2,24 +2,25 @@
 
 ![Screenshot](screenshot.png)
 
-This is a [QB64PE](https://github.com/QB64-Phoenix-Edition/QB64pe) conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
+This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
-Yes, I converted the code again! This time from [FreeBASIC](https://github.com/freebasic/fbc) to [QB64PE](https://github.com/QB64-Phoenix-Edition/QB64pe).
+Yes, I converted the code again! This time from [FreeBASIC](https://github.com/freebasic/fbc) to [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe).
 
 My FreeBASIC port can be found [here](https://drive.google.com/file/d/1s9_G8ZWX_hLLAPQlZcnNke4TllMCIVSf/view) or [here](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb).
 
-The original C code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the C code can be found [here](http://www.droberts.com/pcgpex/update.zip).
+The original [Turbo C](https://winworldpc.com/product/turbo-c/3x) code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the [Turbo C](https://winworldpc.com/product/turbo-c/3x) code can be found [here](http://www.droberts.com/pcgpex/update.zip).
 
 This conversion has multiple improvements over the FreeBASIC version. These are:
 
-- There are no dependencies on external libraries (the FB version required [Allegro](https://github.com/liballeg/allegro5))
-- The game now uses native QB64 graphics and sound functions
-- MIDI playback is handled using the new miniaudio backend for QB64PE
-- An 8bpp PCX loader (with color keying) is implemented using QB64 code
-- The game now runs in 32bpp mode (the FB version ran at 8bpp)
+- There are no dependencies on external libraries (the FreeBASIC version required [Allegro](https://github.com/liballeg/allegro5))
+- The game now uses native QB64-PE graphics and sound functions
+- MIDI playback is handled using the [new](https://github.com/a740g/QBPE/tree/combined) miniaudio backend for QB64-PE
+- PCX loading is handled by [recent](https://github.com/a740g/QBPE/tree/combined) changes to QB64-PE (color keying transparency is done on the BASIC side)
+- The game now runs in 32bpp mode (the FreeBASIC version ran at 8bpp)
 - The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
+- Works on Windows, Linux & macOS
 - Alt+Enter puts the game in window mode
-- Comments are modified to make sense for QB64 and are no longer just a copy from the original C code
+- Comments are modified to make sense for QB64-PE and are no longer just a copy from the original C code
 
 As usual, I do not accept responsibility for any effects, adverse or otherwise, that this code may have on you, your computer, your sanity, your dog, and anything else that you can think of. Use it at your own risk.
 

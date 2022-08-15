@@ -257,137 +257,56 @@ System
 '-----------------------------------------------------------------------------------------------------
 ' FUNCTIONS & SUBROUTINES
 '-----------------------------------------------------------------------------------------------------
-'  Loads a 256 color (8-bit) PCX image to a QB64 32-bit image buffer
-Function LoadPCX& (fileName As String, transparentColorIndex As Integer)
-    ' By default we assume a failure
-    LoadPCX = -1
+' Loads a PCX image to a QB64 32-bit image buffer
+' This also make the bitmap transparent using a color key
+Function LoadPCX& (fileName As String)
+    Dim handle As Long
 
-    ' Check if the file exists
-    If Not FileExists(fileName) Then Exit Function
-
-    ' Attempt to open the file
-    Dim fileHandle As Long
-    fileHandle = FreeFile
-
-    Open fileName For Binary Access Read As fileHandle
-
-    ' Sanity check
-    If Asc(Input$(1, fileHandle)) <> 10 Then
-        Close fileHandle
-        Exit Function
-    End If
-    If Asc(Input$(1, fileHandle)) <> 5 Then
-        Close fileHandle
-        Exit Function
-    End If
-    If Asc(Input$(1, fileHandle)) <> 1 Then
-        Close fileHandle
+    handle = LoadImage(fileName)
+    If handle >= -1 Then
+        LoadPCX = handle
         Exit Function
     End If
 
-    ' TODO: Support 24BPP PCX?
-    If Asc(Input$(1, fileHandle)) <> 8 Then
-        Close fileHandle
-        Exit Function
-    End If
+    MakeBitmapTransparent handle, RGB(0, 0, 0)
 
-    Dim pcxSize As Vector2DType, word As Unsigned Integer
-    Get fileHandle, , word
-    pcxSize.x = -(word) ' xmin
-    Get fileHandle, , word
-    pcxSize.y = -(word) ' ymin
-    Get fileHandle, , word
-    pcxSize.x = pcxSize.x + word + 1 ' xmax
-    Get fileHandle, , word
-    pcxSize.y = pcxSize.y + word + 1 ' ymax
-
-    Get fileHandle, , word ' skip DPI values
-    Get fileHandle, , word ' skip DPI values
-
-    Dim c As Unsigned Byte, pal(0 To 255) As RGBTupleType
-    ' Read the 16 color pallete
-    For c = 0 To 15
-        pal(c).r = Asc(Input$(1, fileHandle))
-        pal(c).g = Asc(Input$(1, fileHandle))
-        pal(c).b = Asc(Input$(1, fileHandle))
-    Next
-
-    Get fileHandle, , c ' skip reserved byte
-
-    ' How many color planes?
-    If Asc(Input$(1, fileHandle)) <> 1 Then
-        Close fileHandle
-        Exit Function
-    End If
-
-    Dim bytesPerLine As Unsigned Integer
-    Get fileHandle, , bytesPerLine
-
-    ' Skip some more junk - (54 + (3 * 2)) / sizeof(word)
-    For c = 1 To 30
-        Get fileHandle, , word
-    Next
-
-    Dim As Unsigned Integer x, y
-    Dim ch As Unsigned Byte
-    Dim img(0 To pcxSize.x - 1, 0 To pcxSize.y - 1) As Unsigned Byte
-    ' Read RLE encoded PCX data
-    For y = 0 To pcxSize.y - 1
-        x = 0
-        While x < bytesPerLine
-            ch = Asc(Input$(1, fileHandle))
-            If (ch And &HC0) = &HC0 Then
-                c = ch And &H3F
-                ch = Asc(Input$(1, fileHandle))
-            Else
-                c = 1
-            End If
-
-            While c > 0
-                If x < pcxSize.x Then img(x, y) = ch
-                x = x + 1
-                c = c - 1
-            Wend
-        Wend
-    Next
-
-    ' Read in the 256 color pallette
-    If Asc(Input$(1, fileHandle)) = 12 Then
-        For c = 0 To 255
-            pal(c).r = Asc(Input$(1, fileHandle))
-            pal(c).g = Asc(Input$(1, fileHandle))
-            pal(c).b = Asc(Input$(1, fileHandle))
-        Next
-    End If
-
-    Dim bmp As Long
-    ' Create an empty bitmap
-    bmp = NewImage(pcxSize.x, pcxSize.y, 32)
-    If bmp >= -1 Then
-        Close fileHandle
-        Exit Function
-    End If
-
-    Dim oldDest As Long
-    oldDest = Dest
-    ' Now assemble the data into the QB64 image buffer
-    ' We should probably do this with a mem ptr
-    Dest bmp
-    For y = 0 To pcxSize.y - 1
-        For x = 0 To pcxSize.x - 1
-            c = img(x, y)
-            If c = transparentColorIndex Then
-                PSet (x, y), RGB32(pal(c).r, pal(c).g, pal(c).b, 0)
-            Else
-                PSet (x, y), RGB32(pal(c).r, pal(c).g, pal(c).b, 255)
-            End If
-        Next
-    Next
-    Dest oldDest
-
-    Close fileHandle
-    LoadPCX = bmp
+    LoadPCX = handle
 End Function
+
+
+' Converts image with color key to image with alpha transparency
+Sub MakeBitmapTransparent (nImage As Long, nColorKey As Unsigned Long)
+    If PixelSize(nImage) <> 4 Then Exit Sub ' This only works on 32bpp images
+
+    Dim Buffer As MEM
+    Buffer = MemImage(nImage) 'Get a memory reference to our image
+
+    Dim As Offset O, O_Last
+    O = Buffer.OFFSET 'We start at this offset
+    O_Last = Buffer.OFFSET + Width(nImage) * Height(nImage) * 4 'We stop when we get to this offset
+
+    Dim As Unsigned Byte ckRed, ckGreen, ckBlue, cRed, cGreen, cBlue
+    ckRed = Red(nColorKey)
+    ckGreen = Green(nColorKey)
+    ckBlue = Blue(nColorKey)
+
+    Do
+        cBlue = MemGet(Buffer, O, Unsigned Byte)
+        O = O + 1
+
+        cGreen = MemGet(Buffer, O, Unsigned Byte)
+        O = O + 1
+
+        cRed = MemGet(Buffer, O, Unsigned Byte)
+        O = O + 1
+
+        If (ckRed = cRed And ckGreen = cGreen And ckBlue = cBlue) Then
+            MemPut Buffer, O, 0 As UNSIGNED BYTE
+        End If
+        O = O + 1
+    Loop Until O = O_Last
+    MemFree Buffer
+End Sub
 
 
 ' Calculates the bounding rectangle for a sprite given its position & size
@@ -456,20 +375,20 @@ Sub InitializeSprites
     Dim i As Integer
 
     ' Load hero spaceship
-    HeroBitmap = LoadPCX("dat/gfx/hero.pcx", 0)
+    HeroBitmap = LoadPCX("dat/gfx/hero.pcx")
 
     ' Set up gun blink stuff
     GunBlinkCounter = GUN_BLINK_RATE
     GunBlinkState = TRUE
 
     ' Load alien spaceship
-    AlienBitmap = LoadPCX("dat/gfx/alien.pcx", 0)
+    AlienBitmap = LoadPCX("dat/gfx/alien.pcx")
 
     ' Load missile
-    MissileBitmap = LoadPCX("dat/gfx/missile.pcx", 0)
+    MissileBitmap = LoadPCX("dat/gfx/missile.pcx")
 
     ' Load missile trails
-    MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrail.pcx", 0)
+    MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrail.pcx")
 
     ' Generate and initialize the other trail
     MissileTrailDnBitmap = NewImage(Width(MissileTrailUpBitmap), Height(MissileTrailUpBitmap))
@@ -478,7 +397,7 @@ Sub InitializeSprites
 
     ' Load explosion bitmaps
     For i = 0 To MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i + 1)) + ".pcx", 0) ' file names are 1 based
+        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i + 1)) + ".pcx") ' file names are 1 based
     Next
 
     ' Initialize Hero sprite
@@ -659,13 +578,13 @@ Sub InitializeHUD
     Dim i As Integer
 
     ' Load the HUD bitmap
-    HUDBitmap = LoadPCX("dat/gfx/hud.pcx", 0)
+    HUDBitmap = LoadPCX("dat/gfx/hud.pcx")
     HUDSize.x = Width(HUDBitmap)
     HUDSize.y = Height(HUDBitmap)
 
     ' Load the digit bitmaps
     For i = 0 To 9
-        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx", 0)
+        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx")
     Next
     HUDDigitSize.x = Width(HUDDigitBitmap(0))
     HUDDigitSize.y = Height(HUDDigitBitmap(0))
@@ -718,9 +637,9 @@ Sub InitializeMap
     MapBitmap = NewImage(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     ' Load the background tiles
-    TileBitmap(0) = LoadPCX("dat/gfx/stars1.pcx", -1)
-    TileBitmap(1) = LoadPCX("dat/gfx/stars2.pcx", -1)
-    TileBitmap(2) = LoadPCX("dat/gfx/earth.pcx", -1)
+    TileBitmap(0) = LoadImage("dat/gfx/stars1.pcx")
+    TileBitmap(1) = LoadImage("dat/gfx/stars2.pcx")
+    TileBitmap(2) = LoadImage("dat/gfx/earth.pcx")
 
     ' Set other variables
     MapScrollStep = MAP_SCROLL_STEP_NORMAL
@@ -1006,7 +925,7 @@ Sub DisplayTitlePage
 
     ' First page of stuff
     Dim tmp As Long
-    tmp = LoadPCX("dat/gfx/title.pcx", -1)
+    tmp = LoadImage("dat/gfx/title.pcx")
 
     ' Stretch bmp to fill the screen
     PutImage (0, 0)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), tmp
