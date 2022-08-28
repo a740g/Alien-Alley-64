@@ -363,7 +363,7 @@ Sub Fade (bOut As Byte)
         ' Flip the framebuffer
         Display
         ' Delay a bit
-        Delay 0.005
+        Delay 0.001
     Next
 
     FreeImage tmp
