@@ -33,6 +33,9 @@ $VersionInfo:OriginalFilename='AlienAlley.exe'
 $VersionInfo:FileDescription='Alien Alley executable'
 $VersionInfo:FILEVERSION#=2,2,0,1
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
+' QB64-PE MIDI support
+$Unstable:Midi
+$MidiSoundFont:Default
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
@@ -268,46 +271,10 @@ Function LoadPCX& (fileName As String)
         Exit Function
     End If
 
-    MakeBitmapTransparent handle, RGB(0, 0, 0)
+    ClearColor RGB(0, 0, 0), handle
 
     LoadPCX = handle
 End Function
-
-
-' Converts image with color key to image with alpha transparency
-Sub MakeBitmapTransparent (nImage As Long, nColorKey As Unsigned Long)
-    If PixelSize(nImage) <> 4 Then Exit Sub ' This only works on 32bpp images
-
-    Dim Buffer As MEM
-    Buffer = MemImage(nImage) 'Get a memory reference to our image
-
-    Dim As Offset O, O_Last
-    O = Buffer.OFFSET 'We start at this offset
-    O_Last = Buffer.OFFSET + Width(nImage) * Height(nImage) * 4 'We stop when we get to this offset
-
-    Dim As Unsigned Byte ckRed, ckGreen, ckBlue, cRed, cGreen, cBlue
-    ckRed = Red(nColorKey)
-    ckGreen = Green(nColorKey)
-    ckBlue = Blue(nColorKey)
-
-    Do
-        cBlue = MemGet(Buffer, O, Unsigned Byte)
-        O = O + 1
-
-        cGreen = MemGet(Buffer, O, Unsigned Byte)
-        O = O + 1
-
-        cRed = MemGet(Buffer, O, Unsigned Byte)
-        O = O + 1
-
-        If (ckRed = cRed And ckGreen = cGreen And ckBlue = cBlue) Then
-            MemPut Buffer, O, 0 As UNSIGNED BYTE
-        End If
-        O = O + 1
-    Loop Until O = O_Last
-    MemFree Buffer
-End Sub
-
 
 ' Calculates the bounding rectangle for a sprite given its position & size
 Sub GetRectangle (position As Vector2DType, size As Vector2DType, r As RectangleType)
@@ -338,7 +305,7 @@ Sub ClearInput
 End Sub
 
 
-' Fades the screen from black
+' Fades the screen from/to black
 Sub Fade (bOut As Byte)
     ' Copy the whole screen to a temporary image buffer
     Dim tmp As Long
