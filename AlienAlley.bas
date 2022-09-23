@@ -17,9 +17,9 @@ $NoPrefix
 DefLng A-Z
 Option Explicit
 Option ExplicitArray
-Option Base 1
 '$Static
-$Resize:Smooth
+Option Base 1
+$Asserts
 $Color:32
 $ExeIcon:'./AlienAlley.ico'
 $VersionInfo:ProductName='Alien Alley'
@@ -33,7 +33,7 @@ $VersionInfo:OriginalFilename='AlienAlley.exe'
 $VersionInfo:FileDescription='Alien Alley executable'
 $VersionInfo:FILEVERSION#=2,2,0,1
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
-' QB64-PE MIDI support
+$Resize:Smooth
 $Unstable:Midi
 $MidiSoundFont:Default
 '-----------------------------------------------------------------------------------------------------
@@ -260,21 +260,16 @@ System
 '-----------------------------------------------------------------------------------------------------
 ' FUNCTIONS & SUBROUTINES
 '-----------------------------------------------------------------------------------------------------
-' Loads a PCX image to a QB64 32-bit image buffer
-' This also make the bitmap transparent using a color key
+' Loads an image and makes the bitmap transparent using a color key
 Function LoadPCX& (fileName As String)
     Dim handle As Long
 
     handle = LoadImage(fileName)
-    If handle >= -1 Then
-        LoadPCX = handle
-        Exit Function
-    End If
-
-    ClearColor RGB(0, 0, 0), handle
+    If handle < -1 Then ClearColor RGB(0, 0, 0), handle
 
     LoadPCX = handle
 End Function
+
 
 ' Calculates the bounding rectangle for a sprite given its position & size
 Sub GetRectangle (position As Vector2DType, size As Vector2DType, r As RectangleType)
@@ -287,13 +282,7 @@ End Sub
 
 ' Collision testing routine. This is a simple bounding box collision test
 Function RectanglesCollide%% (r1 As RectangleType, r2 As RectangleType)
-    ' Leave if the rectangle do not collide
-    If r1.a.x > r2.b.x Or r2.a.x > r1.b.x Or r1.a.y > r2.b.y Or r2.a.y > r1.b.y Then
-        RectanglesCollide = FALSE
-        Exit Function
-    End If
-
-    RectanglesCollide = TRUE
+    RectanglesCollide = Not (r1.a.x > r2.b.x Or r2.a.x > r1.b.x Or r1.a.y > r2.b.y Or r2.a.y > r1.b.y)
 End Function
 
 
@@ -330,7 +319,7 @@ Sub Fade (bOut As Byte)
         ' Flip the framebuffer
         Display
         ' Delay a bit
-        Delay 0.001
+        Delay 0.002
     Next
 
     FreeImage tmp
@@ -343,6 +332,7 @@ Sub InitializeSprites
 
     ' Load hero spaceship
     HeroBitmap = LoadPCX("dat/gfx/hero.pcx")
+    Assert HeroBitmap < -1
 
     ' Set up gun blink stuff
     GunBlinkCounter = GUN_BLINK_RATE
@@ -350,21 +340,26 @@ Sub InitializeSprites
 
     ' Load alien spaceship
     AlienBitmap = LoadPCX("dat/gfx/alien.pcx")
+    Assert AlienBitmap < -1
 
     ' Load missile
     MissileBitmap = LoadPCX("dat/gfx/missile.pcx")
+    Assert MissileBitmap < -1
 
     ' Load missile trails
     MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrail.pcx")
+    Assert MissileTrailUpBitmap < -1
 
     ' Generate and initialize the other trail
     MissileTrailDnBitmap = NewImage(Width(MissileTrailUpBitmap), Height(MissileTrailUpBitmap))
+    Assert MissileTrailDnBitmap < -1
     ' Blit the missiletrailup v inverted
     PutImage (0, Height(MissileTrailUpBitmap) - 1)-(Width(MissileTrailUpBitmap) - 1, 0), MissileTrailUpBitmap, MissileTrailDnBitmap
 
     ' Load explosion bitmaps
     For i = 0 To MAX_EXPLOSION_BITMAPS - 1
         ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i + 1)) + ".pcx") ' file names are 1 based
+        Assert ExplosionBitmap(i) < -1
     Next
 
     ' Initialize Hero sprite
@@ -546,12 +541,14 @@ Sub InitializeHUD
 
     ' Load the HUD bitmap
     HUDBitmap = LoadPCX("dat/gfx/hud.pcx")
+    Assert HUDBitmap < -1
     HUDSize.x = Width(HUDBitmap)
     HUDSize.y = Height(HUDBitmap)
 
     ' Load the digit bitmaps
     For i = 0 To 9
         HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx")
+        Assert HUDDigitBitmap(i) < -1
     Next
     HUDDigitSize.x = Width(HUDDigitBitmap(0))
     HUDDigitSize.y = Height(HUDDigitBitmap(0))
@@ -605,8 +602,11 @@ Sub InitializeMap
 
     ' Load the background tiles
     TileBitmap(0) = LoadImage("dat/gfx/stars1.pcx")
+    Assert TileBitmap(0) < -1
     TileBitmap(1) = LoadImage("dat/gfx/stars2.pcx")
+    Assert TileBitmap(1) < -1
     TileBitmap(2) = LoadImage("dat/gfx/earth.pcx")
+    Assert TileBitmap(2) < -1
 
     ' Set other variables
     MapScrollStep = MAP_SCROLL_STEP_NORMAL
@@ -704,6 +704,7 @@ Sub PlayMIDIFile (fileName As String)
     ' Check if the file exists
     If fileName <> NULLSTRING And FileExists(fileName) Then
         MIDIHandle = SndOpen(fileName, "stream")
+        Assert MIDIHandle > 0
         ' Loop the MIDI file
         If MIDIHandle > 0 Then SndLoop MIDIHandle
     End If
@@ -714,7 +715,9 @@ End Sub
 Sub InitializeSound
     ' Load the sound effects
     ExplosionSound = SndOpen("dat/sfx/snd/explode.wav")
+    Assert ExplosionSound > 0
     LaserSound = SndOpen("dat/sfx/snd/laser.wav")
+    Assert LaserSound > 0
 End Sub
 
 
@@ -893,6 +896,7 @@ Sub DisplayTitlePage
     ' First page of stuff
     Dim tmp As Long
     tmp = LoadImage("dat/gfx/title.pcx")
+    Assert tmp < -1
 
     ' Stretch bmp to fill the screen
     PutImage (0, 0)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), tmp
