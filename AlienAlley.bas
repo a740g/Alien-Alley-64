@@ -1027,7 +1027,7 @@ Sub MoveSprites (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As By
     ' Generate hero missiles
     If UserInputFire And AllowHeroFire And Hero.bDraw Then
         If CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_LEFT, Hero.position.y + HERO_GUN_OFFSET_UP) And CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_RIGHT, Hero.position.y + HERO_GUN_OFFSET_UP) Then
-            SndPlayCopy LaserSound
+            SndPlayCopy LaserSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
         End If
         AllowHeroFire = FALSE
     End If
@@ -1075,7 +1075,7 @@ Sub MoveSprites (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As By
                     CreateAlienMissile Alien(i).position.x + ALIEN_GUN_OFFSET_LEFT, Alien(i).position.y + ALIEN_GUN_OFFSET_DOWN
                     CreateAlienMissile Alien(i).position.x + ALIEN_GUN_OFFSET_RIGHT, Alien(i).position.y + ALIEN_GUN_OFFSET_DOWN
                     Alien(i).objSpec2 = ALIEN_FIRE_LOCKOUT
-                    SndPlayCopy LaserSound
+                    SndPlayCopy LaserSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 End If
             Else
                 Alien(i).objSpec2 = Alien(i).objSpec2 - 1
@@ -1133,7 +1133,7 @@ Sub CheckCollisions
             CreateExplosion Hero.position.x, Hero.position.y
             Alien(i).bDraw = FALSE
             CreateExplosion Alien(i).position.x, Alien(i).position.y
-            SndPlayCopy ExplosionSound
+            SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
         End If
     Next
 
@@ -1150,7 +1150,7 @@ Sub CheckCollisions
                 HeroMissile(j).bDraw = FALSE
                 CreateExplosion Alien(i).position.x, Alien(i).position.y
                 Score = Score + POINTS_PER_ALIEN
-                SndPlayCopy ExplosionSound
+                SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 Exit For ' alien is destroyed
             End If
         Next
@@ -1166,7 +1166,7 @@ Sub CheckCollisions
             If HeroShields <= 0 Then
                 Hero.bDraw = FALSE
                 CreateExplosion Hero.position.x, Hero.position.y
-                SndPlayCopy ExplosionSound
+                SndPlayCopy ExplosionSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 Exit For ' hero is destroyed
             Else
                 ' take away a bit of shields

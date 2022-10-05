@@ -16,7 +16,7 @@ This conversion has multiple improvements over the FreeBASIC version. These are:
 - There are no dependencies on external libraries (the FreeBASIC version required [Allegro](https://github.com/liballeg/allegro5))
 - The game now uses native QB64-PE graphics and sound functions
 - MIDI playback is handled using MIDI support in [QB64-PE v3.2.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
-- PCX loading is handled using PCX suppport in [QB64-PE v3.1.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
+- PCX loading is handled using PCX support in [QB64-PE v3.1.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - PCX color key transparency is done on the BASIC side
 - The game now runs in 32bpp mode (the FreeBASIC version ran at 8bpp)
 - The game runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
