@@ -21,6 +21,9 @@ Option ExplicitArray
 Option Base 1
 $Asserts
 $Color:32
+$Resize:Smooth
+$Unstable:Midi
+$MidiSoundFont:Default
 $ExeIcon:'./AlienAlley.ico'
 $VersionInfo:ProductName='Alien Alley'
 $VersionInfo:CompanyName='Samuel Gomes'
@@ -33,9 +36,6 @@ $VersionInfo:OriginalFilename='AlienAlley.exe'
 $VersionInfo:FileDescription='Alien Alley executable'
 $VersionInfo:FILEVERSION#=2,2,0,1
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
-$Resize:Smooth
-$Unstable:Midi
-$MidiSoundFont:Default
 '-----------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Const UPDATES_PER_SECOND = 60
 ' Screen parameters
 Const SCREEN_WIDTH = 640
 Const SCREEN_HEIGHT = 400
-Const STATUS_HEIGHT = 60 ' our hud is 60 pixels now 30 * 2 in 640x400 mode
+Const STATUS_HEIGHT = 60 ' our HUD is 60 pixels now 30 * 2 in 640x400 mode
 Const REDUCED_SCREEN_HEIGHT = SCREEN_HEIGHT - STATUS_HEIGHT
 ' Scrolling parameters
 Const MAP_SCROLL_STEP_NORMAL = 1
@@ -140,7 +140,7 @@ Type Vector2DType
     y As Long
 End Type
 
-Type RectangleType
+Type Rectangle2DType
     a As Vector2DType
     b As Vector2DType
 End Type
@@ -148,7 +148,7 @@ End Type
 Type SpriteType
     isActive As Byte ' is this sprite active / in use?
     size As Vector2DType ' size of the sprite
-    boundary As RectangleType ' sprite should not leave this area
+    boundary As Rectangle2DType ' sprite should not leave this area
     position As Vector2DType ' (left, top) position of the sprite on the 2D plane
     velocity As Vector2DType ' velocity of the sprite
     bDraw As Byte ' do we need to draw the sprite?
@@ -159,12 +159,6 @@ End Type
 Type HighScoreType
     text As String * High_score_text_len
     score As Long
-End Type
-
-Type RGBTupleType
-    r As Unsigned Byte
-    g As Unsigned Byte
-    b As Unsigned Byte
 End Type
 '-----------------------------------------------------------------------------------------------------
 
@@ -272,7 +266,7 @@ End Function
 
 
 ' Calculates the bounding rectangle for a sprite given its position & size
-Sub GetRectangle (position As Vector2DType, size As Vector2DType, r As RectangleType)
+Sub GetRectangle (position As Vector2DType, size As Vector2DType, r As Rectangle2DType)
     r.a.x = position.x
     r.a.y = position.y
     r.b.x = position.x + size.x - 1
@@ -281,7 +275,7 @@ End Sub
 
 
 ' Collision testing routine. This is a simple bounding box collision test
-Function RectanglesCollide%% (r1 As RectangleType, r2 As RectangleType)
+Function RectanglesCollide%% (r1 As Rectangle2DType, r2 As Rectangle2DType)
     RectanglesCollide = Not (r1.a.x > r2.b.x Or r2.a.x > r1.b.x Or r1.a.y > r2.b.y Or r2.a.y > r1.b.y)
 End Function
 
@@ -732,43 +726,9 @@ End Sub
 
 ' Centers a string on the screen
 ' The function calculates the correct starting column position to center the string on the screen and then draws the actual text
-Sub DrawStringCenter (s As String, y As Integer, c As Long)
+Sub DrawStringCenter (s As String, y As Long, c As Unsigned Long)
     Color c
-    PrintString ((SCREEN_WIDTH / 2) - (PrintWidth(s) / 2), y), s
-End Sub
-
-
-' Fills in the HighScore array with some defaults.
-Sub DefaultHighScores
-    HighScore(0).text = "Gill Bates"
-    HighScore(0).score = 1000
-
-    HighScore(1).text = "Sam Stone"
-    HighScore(1).score = 900
-
-    HighScore(2).text = "Mad Mike"
-    HighScore(2).score = 800
-
-    HighScore(3).text = "Fanatic Joe"
-    HighScore(3).score = 700
-
-    HighScore(4).text = "Joe Dirt"
-    HighScore(4).score = 600
-
-    HighScore(5).text = "Sonic Hedgehog"
-    HighScore(5).score = 500
-
-    HighScore(6).text = "Donald Duck"
-    HighScore(6).score = 400
-
-    HighScore(7).text = "Popeye Sailor"
-    HighScore(7).score = 300
-
-    HighScore(8).text = "Flash Gordon"
-    HighScore(8).score = 200
-
-    HighScore(9).text = "John Blade"
-    HighScore(9).score = 100
+    PrintString ((SCREEN_WIDTH \ 2) - (PrintWidth(s) \ 2), y), s
 End Sub
 
 
@@ -936,26 +896,52 @@ End Sub
 ' Loads the high score file from disk
 ' If a high score file cannot be found or cannot be read, a default list of high-score entries is created
 Sub LoadHighScores
-    Dim i As Integer
-    Dim hsFile As Long
+    If FileExists(HIGH_SCORE_FILENAME) Then
+        Dim i As Integer
+        Dim hsFile As Long
 
-    ' Load default highscores if there is no highscore file
-    If Not FileExists(HIGH_SCORE_FILENAME) Then
-        DefaultHighScores
-        Exit Sub
+        ' Open the highscore file; if there is a problem load defaults
+        hsFile = FreeFile
+        Open HIGH_SCORE_FILENAME For Input As hsFile
+
+        ' Read the name and the scores
+        For i = 0 To NUM_HIGH_SCORES - 1
+            Input #hsFile, HighScore(i).text, HighScore(i).score
+        Next
+
+        ' Close file
+        Close hsFile
+    Else ' Load default highscores if there is no highscore file
+        HighScore(0).text = "Norman Bates"
+        HighScore(0).score = 1000
+
+        HighScore(1).text = "Darth Vader"
+        HighScore(1).score = 900
+
+        HighScore(2).text = "John McClane"
+        HighScore(2).score = 800
+
+        HighScore(3).text = "Captain Quint"
+        HighScore(3).score = 700
+
+        HighScore(4).text = "Indiana Jones"
+        HighScore(4).score = 600
+
+        HighScore(5).text = "James Bond"
+        HighScore(5).score = 500
+
+        HighScore(6).text = "Mary Poppins"
+        HighScore(6).score = 400
+
+        HighScore(7).text = "Freddy Krueger"
+        HighScore(7).score = 300
+
+        HighScore(8).text = "Jack Sparrow"
+        HighScore(8).score = 200
+
+        HighScore(9).text = "Ace Ventura"
+        HighScore(9).score = 100
     End If
-
-    ' Open the highscore file; if there is a problem load defaults
-    hsFile = FreeFile
-    Open HIGH_SCORE_FILENAME For Input As hsFile
-
-    ' Read the name and the scores
-    For i = 0 To NUM_HIGH_SCORES - 1
-        Input #hsFile, HighScore(i).text, HighScore(i).score
-    Next
-
-    ' Close file
-    Close hsFile
 End Sub
 
 
@@ -1119,7 +1105,7 @@ End Sub
 ' Note that all tests are performed between objects that are currently being drawn, not just active objects
 Sub CheckCollisions
     Dim As Integer i, j
-    Dim As RectangleType r1, r2
+    Dim As Rectangle2DType r1, r2
 
     ' Check between hero and aliens
     For i = 0 To MAX_ALIENS - 1
