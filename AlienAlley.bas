@@ -429,7 +429,7 @@ End Sub
 ' Updates the "UserInput..." variables used by the MoveSprites routine from supported input devices
 ' Return TRUE if ESC was pressed
 ' TODO: Add game controller support
-Function PollInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
+Function GetInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
     Dim mouseMovement As Vector2DType
     Dim mouseFire As Byte
 
@@ -446,7 +446,7 @@ Function PollInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft 
     UserInputDown = (mouseMovement.y > 0) Or KeyDown(KEY_DOWN) Or KeyDown(KEY_SU) Or KeyDown(KEY_SL)
     UserInputFire = mouseFire Or KeyDown(KEY_SPACE) Or KeyDown(KEY_LCONTROL) Or KeyDown(KEY_RCONTROL) Or KeyDown(KEY_LALT) Or KeyDown(KEY_RALT)
 
-    PollInput = KeyDown(KEY_ESC)
+    GetInput = KeyDown(KEY_ESC)
 End Function
 
 
@@ -512,14 +512,13 @@ End Sub
 
 
 ' Starts an explosion occuring at the appropriate x and y coordinates.
-Sub CreateExplosion (x As Integer, y As Integer)
+Sub CreateExplosion (position As Vector2DType)
     Dim i As Integer
 
     For i = 0 To MAX_EXPLOSIONS - 1
         If Not Explosion(i).isActive Then
             Explosion(i).isActive = TRUE
-            Explosion(i).position.x = x
-            Explosion(i).position.y = y
+            Explosion(i).position = position
             Explosion(i).objSpec1 = 0 ' current explosion bitmap
             Explosion(i).objSpec2 = EXPLOSION_FRAME_REPEAT_COUNT
             Explosion(i).bDraw = TRUE
@@ -874,8 +873,8 @@ Sub DisplayIntroCredits
     Cls
 
     ' First page of stuff
-    DrawStringCenter "Coriolis Group Books", 8 * 19, White
-    DrawStringCenter "Presents", 8 * 21, White
+    DrawStringCenter "Coriolis Group Books", FontHeight * 12, White
+    DrawStringCenter "Presents", FontHeight * 13, White
 
     Fade FALSE ' fade in
     Fade TRUE ' fade out
@@ -884,9 +883,9 @@ Sub DisplayIntroCredits
     Cls
 
     ' Second page of stuff
-    DrawStringCenter "A", 8 * 18, White
-    DrawStringCenter "Dave Roberts", 8 * 20, White
-    DrawStringCenter "Production", 8 * 22, White
+    DrawStringCenter "A", FontHeight * 11, White
+    DrawStringCenter "Dave Roberts", FontHeight * 12, White
+    DrawStringCenter "Production", FontHeight * 13, White
 
     Fade FALSE ' fade in
     Fade TRUE ' fade out
@@ -1116,9 +1115,9 @@ Sub CheckCollisions
         GetRectangle Alien(i).position, Alien(i).size, r2
         If Hero.bDraw And Alien(i).bDraw And RectanglesCollide(r1, r2) Then
             Hero.bDraw = FALSE
-            CreateExplosion Hero.position.x, Hero.position.y
+            CreateExplosion Hero.position
             Alien(i).bDraw = FALSE
-            CreateExplosion Alien(i).position.x, Alien(i).position.y
+            CreateExplosion Alien(i).position
             SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
         End If
     Next
@@ -1134,7 +1133,7 @@ Sub CheckCollisions
             If HeroMissile(j).bDraw And RectanglesCollide(r1, r2) Then
                 Alien(i).bDraw = FALSE
                 HeroMissile(j).bDraw = FALSE
-                CreateExplosion Alien(i).position.x, Alien(i).position.y
+                CreateExplosion Alien(i).position
                 Score = Score + POINTS_PER_ALIEN
                 SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 Exit For ' alien is destroyed
@@ -1151,7 +1150,7 @@ Sub CheckCollisions
             AlienMissile(i).bDraw = FALSE ' destroy missile in any case
             If HeroShields <= 0 Then
                 Hero.bDraw = FALSE
-                CreateExplosion Hero.position.x, Hero.position.y
+                CreateExplosion Hero.position
                 SndPlayCopy ExplosionSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 Exit For ' hero is destroyed
             Else
@@ -1384,7 +1383,7 @@ Sub RunGame
     ' Main game loop
     Do
         ' Get user input
-        GameOver = PollInput(UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire)
+        GameOver = GetInput(UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire)
 
         ' Move sprites
         MoveSprites UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire
