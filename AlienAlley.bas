@@ -193,6 +193,7 @@ Dim Shared MissileTrailDnBitmap As Long
 Dim Shared ExplosionBitmap(0 To MAX_EXPLOSION_BITMAPS - 1) As Long
 Dim Shared TileBitmap(0 To NUM_TILES - 1) As Long
 Dim Shared MapBitmap As Long ' this is for the background tilemap
+Dim Shared MapBitmapTemp As Long ' this is for holding temporary copies of the map bitmap
 Dim Shared HUDBitmap As Long
 Dim Shared HUDDigitBitmap(0 To 9) As Long
 '-----------------------------------------------------------------------------------------------------
@@ -592,6 +593,8 @@ Sub InitializeMap
 
     ' Create the main tile buffer first
     MapBitmap = NewImage(SCREEN_WIDTH, SCREEN_HEIGHT)
+    ' Create the temp tile buffer
+    MapBitmapTemp = CopyImage(MapBitmap)
 
     ' Load the background tiles
     TileBitmap(0) = LoadImage("dat/gfx/stars1.pcx")
@@ -634,6 +637,7 @@ Sub FinalizeMap
         FreeImage TileBitmap(i)
     Next
 
+    FreeImage MapBitmapTemp
     FreeImage MapBitmap
 End Sub
 
@@ -662,10 +666,8 @@ Sub UpdateMap
     End If
 
     ' Shift the entire background down by "scrollstep" pixels
-    Dim tmp As Long
-    tmp = CopyImage(MapBitmap)
-    PutImage (0, MapScrollStep), tmp, MapBitmap
-    FreeImage tmp
+    PutImage , MapBitmap, MapBitmapTemp
+    PutImage (0, MapScrollStep), MapBitmapTemp, MapBitmap
 
     ' Move the new tiles down by "scrollstep"
     MapLineCounter = MapLineCounter + MapScrollStep
@@ -1394,10 +1396,10 @@ Sub RunGame
         ' Erase any sprites if required
         GameOver = GameOver Or EraseSprites
 
-        ' Scroll screen (this will basically wipe the whole framebuffer so we do not clear anything)
+        ' Scroll screen
         UpdateMap
 
-        ' Draw map
+        ' Draw map (this will basically wipe the whole framebuffer so we do not clear anything)
         DrawMap
 
         ' Draw sprites
