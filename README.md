@@ -13,16 +13,16 @@ The original [Turbo C](https://winworldpc.com/product/turbo-c/3x) code that came
 This conversion has multiple improvements over the FreeBASIC version. These are:
 
 - Works natively on Windows, Linux & macOS
-- There are no dependencies on external libraries (the FreeBASIC version required [Allegro](https://github.com/liballeg/allegro5))
-- Uses native QB64-PE graphics and sound functions
-- Runs in 32bpp graphics mode (the FreeBASIC version ran at 8bpp)
+- There are no [Allegro](https://github.com/liballeg/allegro5) dependencies unlike the [FreeBASIC version](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb)
+- Uses native [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases) graphics and sound functions
+- Runs in 32bpp graphics mode unlike the [FreeBASIC version](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb) that ran at 8bpp
 - Runs at 640x400 (16:10 aspect ratio) fullscreen with square pixels
-- PCX loading is handled using PCX support in [QB64-PE v3.1.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
+- PCX loading is handled using PCX support in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - PCX color key transparency is done on the BASIC side
-- MIDI playback is handled using MIDI support in [QB64-PE v3.2.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
+- MIDI playback is handled using MIDI support in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - Alt + Enter puts the game in window mode
 
-The source port also uses new features introduced in [QB64-PE v3.3.x+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases) and as such may not work correctly or reliably with older versions of QB64-PE or any version of QB64. You've been warned. Please don't nag me about backwards compatiblity.
+The source port also uses new features introduced in [QB64-PE v3.3.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases) and as such may not work correctly or reliably with older versions of QB64-PE or any version of QB64. You've been warned. Please don't nag me about backwards compatiblity.
 
 Icon by [Good Stuff No Nonsense](https://iconarchive.com/artist/goodstuff-no-nonsense.html)
 
