@@ -157,7 +157,7 @@ Type SpriteType
 End Type
 
 Type HighScoreType
-    text As String * High_score_text_len
+    text As String
     score As Long
 End Type
 '-----------------------------------------------------------------------------------------------------
@@ -735,17 +735,14 @@ End Sub
 
 ' Displays the HighScore array on the screen.
 Sub DrawHighScores
-    Dim As Integer h, i
-    Dim s As String
+    Dim As Integer i
 
     UpdateMap
     DrawMap
 
-    h = FontHeight
-    DrawStringCenter "####===-- HIGH SCORES --===####", h * 2, LemonYellow
+    DrawStringCenter "####===-- HIGH SCORES --===####", 32, LemonYellow
     For i = 0 To NUM_HIGH_SCORES - 1
-        s = Right$(" " + Str$(i + 1), 2) + ". " + HighScore(i).text + "  " + Right$(Space$(4) + Str$(HighScore(i).score), 5)
-        DrawStringCenter s, (h * 4) + i * FontHeight * 2, SkyBlue
+        DrawStringCenter Right$(" " + Str$(i + 1), 2) + ". " + Left$(HighScore(i).text + Space$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + Right$(Space$(4) + Str$(HighScore(i).score), 5), 64 + i * 32, SkyBlue
     Next
 End Sub
 
@@ -783,7 +780,7 @@ End Sub
 
 ' Manipulates the HighScore array to make room for the users score and gets the new text
 Sub NewHighScore (NewScore As Long)
-    Dim As Integer i, y, x, sPos
+    Dim As Integer i, sPos
     Dim k As Unsigned Integer
 
     ' Check to see if it's really a high score
@@ -815,8 +812,6 @@ Sub NewHighScore (NewScore As Long)
     ' Fade in
     Fade FALSE
 
-    y = (FontHeight * 4) + i * FontHeight * 2
-    x = 228
     sPos = 0
     ClearInput
     Color DeepSkyBlue
@@ -824,17 +819,15 @@ Sub NewHighScore (NewScore As Long)
     ' Get user text string
     Do
         DrawHighScores
-        PrintString (x, y), Chr$(179)
+        PrintString (228 + sPos * 8, 64 + i * 32), Chr$(179)
 
         k = KeyHit
         If k >= KEY_SPACE And k <= KEY_TILDE And sPos < HIGH_SCORE_TEXT_LEN Then
-            Asc(HighScore(i).text, sPos + 1) = k
             sPos = sPos + 1
-            x = x + FontWidth
+            HighScore(i).text = HighScore(i).text + Chr$(k)
         ElseIf k = KEY_BACKSPACE And sPos > 0 Then
-            Asc(HighScore(i).text, sPos) = KEY_SPACE
             sPos = sPos - 1
-            x = x - FontWidth
+            HighScore(i).text = Left$(HighScore(i).text, sPos)
         End If
 
         Display
@@ -875,8 +868,8 @@ Sub DisplayIntroCredits
     Cls
 
     ' First page of stuff
-    DrawStringCenter "Coriolis Group Books", FontHeight * 12, White
-    DrawStringCenter "Presents", FontHeight * 13, White
+    DrawStringCenter "Coriolis Group Books", 192, White
+    DrawStringCenter "Presents", 208, White
 
     Fade FALSE ' fade in
     Fade TRUE ' fade out
@@ -885,9 +878,9 @@ Sub DisplayIntroCredits
     Cls
 
     ' Second page of stuff
-    DrawStringCenter "A", FontHeight * 11, White
-    DrawStringCenter "Dave Roberts", FontHeight * 12, White
-    DrawStringCenter "Production", FontHeight * 13, White
+    DrawStringCenter "A", 176, White
+    DrawStringCenter "Dave Roberts", 192, White
+    DrawStringCenter "Production", 208, White
 
     Fade FALSE ' fade in
     Fade TRUE ' fade out
