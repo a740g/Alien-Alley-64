@@ -259,8 +259,8 @@ System
 Function LoadPCX& (fileName As String)
     Dim handle As Long
 
-    handle = LoadImage(fileName)
-    If handle < -1 Then ClearColor RGB(0, 0, 0), handle
+    handle = LoadImage(fileName, 257) ' Load the image as 8bpp (adaptive palette)
+    If handle < -1 Then ClearColor 0, handle ' Set index 0 to transparent. This works because the top-left corner in all our images is black
 
     LoadPCX = handle
 End Function
@@ -292,12 +292,9 @@ End Sub
 ' Fades the screen from/to black
 Sub Fade (bOut As Byte)
     ' Copy the whole screen to a temporary image buffer
-    Dim tmp As Long
+    Dim As Long tmp, w, h, i
+
     tmp = CopyImage(0)
-
-    Dim i As Unsigned Byte
-    Dim As Unsigned Integer w, h
-
     w = Width(tmp) - 1
     h = Height(tmp) - 1
 
@@ -306,9 +303,9 @@ Sub Fade (bOut As Byte)
         PutImage (0, 0), tmp
         ' Now draw a black box over the image with changing alpha
         If bOut Then
-            Line (0, 0)-(w, h), RGBA(0, 0, 0, i), BF
+            Line (0, 0)-(w, h), RGBA32(0, 0, 0, i), BF
         Else
-            Line (0, 0)-(w, h), RGBA(0, 0, 0, 255 - i), BF
+            Line (0, 0)-(w, h), RGBA32(0, 0, 0, 255 - i), BF
         End If
 
         ' Flip the framebuffer
@@ -328,10 +325,6 @@ Sub InitializeSprites
     ' Load hero spaceship
     HeroBitmap = LoadPCX("dat/gfx/hero.pcx")
     Assert HeroBitmap < -1
-
-    ' Set up gun blink stuff
-    GunBlinkCounter = GUN_BLINK_RATE
-    GunBlinkState = TRUE
 
     ' Load alien spaceship
     AlienBitmap = LoadPCX("dat/gfx/alien.pcx")
@@ -408,6 +401,10 @@ Sub InitializeSprites
         Explosion(i).size.y = Height(ExplosionBitmap(0))
         Explosion(i).bDraw = FALSE
     Next
+
+    ' Set up gun blink stuff
+    GunBlinkCounter = GUN_BLINK_RATE
+    GunBlinkState = TRUE
 End Sub
 
 
@@ -570,7 +567,7 @@ Sub DrawHUD
     PutImage (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap
 
     ' Update the shield status
-    Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
+    Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
     Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
 
     ScoreText = Right$("000000" + LTrim$(Str$(Score)), 6)
@@ -1219,34 +1216,16 @@ End Function
 
 ' Unlike the 8BPP version which changes the pallette, this changes the actual sprite pixels
 Sub BlinkGuns (bRed As Byte)
-    ' Save the current write page
-    Dim oldDest As Long
-    oldDest = Dest
-
-    ' Now just set the pixels with the color we want
-    Dest HeroBitmap
+    ' Just set the correct palette index to red / black
     If bRed Then
-        PSet (4, 12), NP_Red
-        PSet (27, 12), NP_Red
-        PSet (15, 30), Black
-        PSet (16, 30), Black
+        PaletteColor 17, NP_Red, HeroBitmap
+        PaletteColor 48, Black, AlienBitmap
+        PaletteColor 121, NP_Red, HUDBitmap
     Else
-        PSet (4, 12), Black
-        PSet (27, 12), Black
-        PSet (15, 30), NP_Red
-        PSet (16, 30), NP_Red
+        PaletteColor 17, Black, HeroBitmap
+        PaletteColor 48, NP_Red, AlienBitmap
+        PaletteColor 121, Black, HUDBitmap
     End If
-
-    Dest AlienBitmap
-    If Not bRed Then
-        PSet (5, 18), NP_Red
-        PSet (26, 18), NP_Red
-    Else
-        PSet (5, 18), Black
-        PSet (26, 18), Black
-    End If
-
-    Dest oldDest
 End Sub
 
 
