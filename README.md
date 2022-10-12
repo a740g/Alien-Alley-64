@@ -1,6 +1,8 @@
 # What is this?
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshots/screenshot1.png)
+![Screenshot](screenshots/screenshot2.png)
+![Screenshot](screenshots/screenshot3.png)
 
 This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
