@@ -432,6 +432,7 @@ Function GetInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft A
     Dim mouseFire As Byte
 
     ' Collect and aggregate mouse input
+    ' The mouse should not give undue advantage
     While MouseInput
         mouseMovement.x = mouseMovement.x + MouseMovementX
         mouseMovement.y = mouseMovement.y + MouseMovementY
