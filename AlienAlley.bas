@@ -1,4 +1,4 @@
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 '      _    _ _                 _    _ _
 '     / \  | (_) ___ _ __      / \  | | | ___ _   _
 '    / _ \ | | |/ _ \ '_ \    / _ \ | | |/ _ \ | | |
@@ -8,20 +8,18 @@
 '
 '  Conversion / port copyright (c) 1998-2022 Samuel Gomes
 '
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+' HEADER FILES
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'$Include:'Common.bi'
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' METACOMMANDS
-'-----------------------------------------------------------------------------------------------------
-$NoPrefix
-DefLng A-Z
-Option Explicit
-Option ExplicitArray
-'$Static
-Option Base 1
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 $Asserts
-$Color:32
-$Resize:Smooth
 $Unstable:Midi
 $MidiSoundFont:Default
 $ExeIcon:'./AlienAlley.ico'
@@ -36,15 +34,11 @@ $VersionInfo:OriginalFilename='AlienAlley.exe'
 $VersionInfo:FileDescription='Alien Alley executable'
 $VersionInfo:FILEVERSION#=2,2,0,1
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' CONSTANTS
-'-----------------------------------------------------------------------------------------------------
-Const FALSE = 0, TRUE = Not FALSE
-Const NULL = 0
-Const NULLSTRING = ""
-
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' Game constants
 Const APP_NAME = "Alien Alley"
 Const MAX_ALIENS = 4
@@ -100,41 +94,11 @@ Const REDUCED_SCREEN_HEIGHT = SCREEN_HEIGHT - STATUS_HEIGHT
 ' Scrolling parameters
 Const MAP_SCROLL_STEP_NORMAL = 1
 Const MAP_SCROLL_STEP_FAST = 2
-' Keys that we use
-Const KEY_WL = 119
-Const KEY_WU = 87
-Const KEY_SL = 115
-Const KEY_SU = 83
-Const KEY_AL = 97
-Const KEY_AU = 65
-Const KEY_DL = 100
-Const KEY_DU = 68
-Const KEY_UP = 18432
-Const KEY_DOWN = 20480
-Const KEY_LEFT = 19200
-Const KEY_RIGHT = 19712
-Const KEY_SPACE = 32
-Const KEY_LCONTROL = 100306
-Const KEY_RCONTROL = 100305
-Const KEY_LALT = 100308
-Const KEY_RALT = 100306
-Const KEY_ESC = 27
-Const KEY_ENTER = 13
-Const KEY_BACKSPACE = 8
-Const KEY_TILDE = 126
-Const KEY_QL = 113
-Const KEY_QU = 81
-Const KEY_KL = 107
-Const KEY_KU = 75
-Const KEY_ML = 109
-Const KEY_MU = 77
-Const KEY_JL = 106
-Const KEY_JU = 74
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' USER DEFINED TYPES
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 Type Vector2DType
     x As Long
     y As Long
@@ -160,11 +124,11 @@ Type HighScoreType
     text As String
     score As Long
 End Type
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' GLOBAL VARIABLES
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 Dim Shared Score As Long
 Dim Shared HeroShields As Integer
 Dim Shared HighScore(0 To NUM_HIGH_SCORES - 1) As HighScoreType
@@ -196,12 +160,12 @@ Dim Shared MapBitmap As Long ' this is for the background tilemap
 Dim Shared MapBitmapTemp As Long ' this is for holding temporary copies of the map bitmap
 Dim Shared HUDBitmap As Long
 Dim Shared HUDDigitBitmap(0 To 9) As Long
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' PROGRAM ENTRY POINT - Main program loop. Inits the program, draws intro screens and title pages,
 ' and waits for user to hit keystroke to indicated what they want to do
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 Dim Quit As Byte
 Dim DrawTitle As Byte
 Dim k As Unsigned Long
@@ -228,17 +192,20 @@ While Not Quit
 
     ' Check what key was press and action it
     Select Case k
-        Case KEY_ESC, KEY_QL, KEY_QU
+        Case KEY_ESCAPE, KEY_LOWER_Q, KEY_UPPER_Q
             Quit = TRUE
-        Case KEY_KL, KEY_KU, KEY_ML, KEY_MU, KEY_JL, KEY_JU, KEY_ENTER
+
+        Case KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, KEY_ENTER
             RunGame
             NewHighScore Score
             ClearInput
             DrawTitle = TRUE
-        Case KEY_SL, KEY_SU
+
+        Case KEY_LOWER_S, KEY_UPPER_S
             DisplayHighScoresScreen
             ClearInput
             DrawTitle = TRUE
+
         Case Else
             DrawTitle = FALSE
     End Select
@@ -250,11 +217,11 @@ Fade TRUE
 FinalizeProgram
 
 System
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' FUNCTIONS & SUBROUTINES
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' Loads an image and makes the bitmap transparent using a color key
 Function LoadPCX& (fileName As String)
     Dim handle As Long
@@ -439,13 +406,13 @@ Function GetInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft A
         mouseFire = mouseFire Or MouseButton(1) Or MouseButton(2) Or MouseButton(3)
     Wend
 
-    UserInputLeft = (mouseMovement.x < 0) Or KeyDown(KEY_LEFT) Or KeyDown(KEY_AU) Or KeyDown(KEY_AL)
-    UserInputRight = (mouseMovement.x > 0) Or KeyDown(KEY_RIGHT) Or KeyDown(KEY_DU) Or KeyDown(KEY_DL)
-    UserInputUp = (mouseMovement.y < 0) Or KeyDown(KEY_UP) Or KeyDown(KEY_WU) Or KeyDown(KEY_WL)
-    UserInputDown = (mouseMovement.y > 0) Or KeyDown(KEY_DOWN) Or KeyDown(KEY_SU) Or KeyDown(KEY_SL)
-    UserInputFire = mouseFire Or KeyDown(KEY_SPACE) Or KeyDown(KEY_LCONTROL) Or KeyDown(KEY_RCONTROL) Or KeyDown(KEY_LALT) Or KeyDown(KEY_RALT)
+    UserInputLeft = (mouseMovement.x < 0) Or KeyDown(KEY_LEFT_ARROW) Or KeyDown(KEY_UPPER_A) Or KeyDown(KEY_LOWER_A)
+    UserInputRight = (mouseMovement.x > 0) Or KeyDown(KEY_RIGHT_ARROW) Or KeyDown(KEY_UPPER_D) Or KeyDown(KEY_LOWER_D)
+    UserInputUp = (mouseMovement.y < 0) Or KeyDown(KEY_UP_ARROW) Or KeyDown(KEY_UPPER_W) Or KeyDown(KEY_LOWER_W)
+    UserInputDown = (mouseMovement.y > 0) Or KeyDown(KEY_DOWN_ARROW) Or KeyDown(KEY_UPPER_S) Or KeyDown(KEY_LOWER_S)
+    UserInputFire = mouseFire Or KeyDown(KEY_SPACE_BAR) Or KeyDown(KEY_LEFT_CONTROL) Or KeyDown(KEY_RIGHT_CONTROL) Or KeyDown(KEY_LEFT_ALT) Or KeyDown(KEY_RIGHT_ALT)
 
-    GetInput = KeyDown(KEY_ESC)
+    GetInput = KeyDown(KEY_ESCAPE)
 End Function
 
 
@@ -820,7 +787,7 @@ Sub NewHighScore (NewScore As Long)
         PrintString (228 + sPos * 8, 64 + i * 32), Chr$(179)
 
         k = KeyHit
-        If k >= KEY_SPACE And k <= KEY_TILDE And sPos < HIGH_SCORE_TEXT_LEN Then
+        If k >= KEY_SPACE_BAR And k <= KEY_TILDE And sPos < HIGH_SCORE_TEXT_LEN Then
             sPos = sPos + 1
             HighScore(i).text = HighScore(i).text + Chr$(k)
         ElseIf k = KEY_BACKSPACE And sPos > 0 Then
@@ -1394,5 +1361,5 @@ Sub RunGame
     ' Fade to black...
     Fade TRUE
 End Sub
-'-----------------------------------------------------------------------------------------------------
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
