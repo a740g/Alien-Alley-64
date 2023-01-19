@@ -152,6 +152,9 @@ $If COMMON_BI = UNDEFINED Then
     Const KEY_CLOSE_PARENTHESIS = 41
     Const KEY_SEMICOLON = 59
     Const KEY_COLON = 58
+    ' QB64 errors that we can throw if something bad happens
+    Const ERROR_INVALID_HANDLE = 258
+    Const ERROR_FEATURE_UNAVAILABLE = 73
     '-----------------------------------------------------------------------------------------------------------------------------------------------------------
 $End If
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
