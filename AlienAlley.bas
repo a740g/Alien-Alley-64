@@ -6,7 +6,7 @@
 '  /_/   \_\_|_|\___|_| |_| /_/   \_\_|_|\___|\__, |
 '                                             |___/
 '
-'  Conversion / port copyright (c) 1998-2022 Samuel Gomes
+'  Source port copyright (c) 2023 Samuel Gomes
 '
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -23,16 +23,16 @@ $Asserts
 $Unstable:Midi
 $MidiSoundFont:Default
 $ExeIcon:'./AlienAlley.ico'
-$VersionInfo:ProductName='Alien Alley'
-$VersionInfo:CompanyName='Samuel Gomes'
-$VersionInfo:LegalCopyright='Conversion / port copyright (c) 1998-2022 Samuel Gomes'
-$VersionInfo:LegalTrademarks='All trademarks are property of their respective owners'
-$VersionInfo:Web='https://github.com/a740g'
-$VersionInfo:Comments='https://github.com/a740g'
-$VersionInfo:InternalName='AlienAlley'
-$VersionInfo:OriginalFilename='AlienAlley.exe'
-$VersionInfo:FileDescription='Alien Alley executable'
-$VersionInfo:FILEVERSION#=2,2,0,1
+$VersionInfo:ProductName=Alien Alley
+$VersionInfo:CompanyName=Samuel Gomes
+$VersionInfo:LegalCopyright=Conversion / port copyright (c) 1998-2022 Samuel Gomes
+$VersionInfo:LegalTrademarks=All trademarks are property of their respective owners
+$VersionInfo:Web=https://github.com/a740g
+$VersionInfo:Comments=https://github.com/a740g
+$VersionInfo:InternalName=AlienAlley
+$VersionInfo:OriginalFilename=AlienAlley.exe
+$VersionInfo:FileDescription=Alien Alley executable
+$VersionInfo:FILEVERSION#=2,2,0,5
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 

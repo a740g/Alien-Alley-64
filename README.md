@@ -4,9 +4,9 @@
 ![Screenshot](screenshots/screenshot2.png)
 ![Screenshot](screenshots/screenshot3.png)
 
-This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) conversion of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
+This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) source port of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
-Yes, I converted the code again! This time from [FreeBASIC](https://github.com/freebasic/fbc) to [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe).
+Actually, this is a source port of a source port! From [FreeBASIC](https://github.com/freebasic/fbc) to [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe).
 
 My FreeBASIC port can be found [here](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb).
 
@@ -24,7 +24,7 @@ This conversion has multiple improvements over the FreeBASIC version. These are:
 - MIDI playback is handled using MIDI support in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - Alt + Enter puts the game in window mode
 
-The source port also uses new features introduced in [QB64-PE v3.3.0+](https://github.com/QB64-Phoenix-Edition/QB64pe/releases) and as such may not work correctly or reliably with older versions of QB64-PE or any version of QB64. You've been warned. Please don't nag me about backwards compatiblity.
+The source port uses new features introduced in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases) and as such may not work correctly or reliably with QB64.
 
 Icon by [Good Stuff No Nonsense](https://iconarchive.com/artist/goodstuff-no-nonsense.html)
 
