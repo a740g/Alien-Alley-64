@@ -24,7 +24,7 @@ This conversion has multiple improvements over the FreeBASIC version. These are:
 - MIDI playback is handled using MIDI support in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - Alt + Enter puts the game in window mode
 
-The source port the latest version of [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases).
+The source port requires the latest version of [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases).
 
 Icon by [Good Stuff No Nonsense](https://iconarchive.com/artist/goodstuff-no-nonsense.html)
 
