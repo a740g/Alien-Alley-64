@@ -25,14 +25,14 @@ $MidiSoundFont:Default
 $ExeIcon:'./AlienAlley.ico'
 $VersionInfo:ProductName=Alien Alley
 $VersionInfo:CompanyName=Samuel Gomes
-$VersionInfo:LegalCopyright=Conversion / port copyright (c) 1998-2022 Samuel Gomes
+$VersionInfo:LegalCopyright=Copyright (c) 2023 Samuel Gomes
 $VersionInfo:LegalTrademarks=All trademarks are property of their respective owners
 $VersionInfo:Web=https://github.com/a740g
 $VersionInfo:Comments=https://github.com/a740g
 $VersionInfo:InternalName=AlienAlley
 $VersionInfo:OriginalFilename=AlienAlley.exe
 $VersionInfo:FileDescription=Alien Alley executable
-$VersionInfo:FILEVERSION#=2,2,0,5
+$VersionInfo:FILEVERSION#=2,2,1,0
 $VersionInfo:PRODUCTVERSION#=2,2,0,0
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -99,11 +99,6 @@ Const MAP_SCROLL_STEP_FAST = 2
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' USER DEFINED TYPES
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Type Vector2DType
-    x As Long
-    y As Long
-End Type
-
 Type Rectangle2DType
     a As Vector2DType
     b As Vector2DType
@@ -180,7 +175,7 @@ DisplayIntroCredits
 ClearInput
 
 ' Main menu loop
-While Not Quit
+Do While Not Quit
     ' Draw title page (only if required)
     If DrawTitle Then
         DisplayTitlePage
@@ -209,7 +204,7 @@ While Not Quit
         Case Else
             DrawTitle = FALSE
     End Select
-Wend
+Loop
 
 ' Fade out
 Fade TRUE
@@ -250,8 +245,8 @@ End Function
 
 ' Chear mouse and keyboard events
 Sub ClearInput
-    While MouseInput
-    Wend
+    Do While MouseInput
+    Loop
     KeyClear
 End Sub
 
@@ -401,11 +396,11 @@ Function GetInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft A
 
     ' Collect and aggregate mouse input
     ' The mouse should not give undue advantage
-    While MouseInput
+    Do While MouseInput
         mouseMovement.x = mouseMovement.x + MouseMovementX
         mouseMovement.y = mouseMovement.y + MouseMovementY
         mouseFire = mouseFire Or MouseButton(1) Or MouseButton(2) Or MouseButton(3)
-    Wend
+    Loop
 
     UserInputLeft = (mouseMovement.x < 0) Or KeyDown(KEY_LEFT_ARROW) Or KeyDown(KEY_UPPER_A) Or KeyDown(KEY_LOWER_A)
     UserInputRight = (mouseMovement.x > 0) Or KeyDown(KEY_RIGHT_ARROW) Or KeyDown(KEY_UPPER_D) Or KeyDown(KEY_LOWER_D)
@@ -734,9 +729,9 @@ Sub DisplayHighScoresScreen
         Display
         Limit UPDATES_PER_SECOND
 
-        While MouseInput
+        Do While MouseInput
             If MouseButton(1) Or MouseButton(2) Or MouseButton(3) Then Exit Do
-        Wend
+        Loop
     Loop While KeyHit <= NULL
 
     ' Fade out
