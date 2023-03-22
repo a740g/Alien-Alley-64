@@ -221,7 +221,7 @@ System
 Function LoadPCX& (fileName As String)
     Dim handle As Long
 
-    handle = LoadImage(fileName, 257) ' Load the image as 8bpp (adaptive palette)
+    handle = LoadImage(fileName, 256, "adaptive") ' Load the image as 8bpp (adaptive palette)
     If handle < -1 Then ClearColor 0, handle ' Set index 0 to transparent. This works because the top-left corner in all our images is black
 
     LoadPCX = handle
