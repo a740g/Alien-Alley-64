@@ -1,10 +1,10 @@
 # ALIEN ALLEY
 
+This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) source port of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
+
 ![Screenshot](screenshots/screenshot1.png)
 ![Screenshot](screenshots/screenshot2.png)
 ![Screenshot](screenshots/screenshot3.png)
-
-This is a [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) source port of the Alien Alley game that came with the book [PC Game Programming Explorer](http://www.droberts.com/pcgpex/pcgpex.htm) by Dave Roberts.
 
 Actually, this is a source port of a source port! From [FreeBASIC](https://github.com/freebasic/fbc) to [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe).
 
@@ -12,7 +12,7 @@ My FreeBASIC port can be found [here](https://github.com/a740g/AlienAlleyQB64/tr
 
 The original [Turbo C](https://winworldpc.com/product/turbo-c/3x) code that came with the book can be found [here](http://www.droberts.com/pcgpex/source.zip). The update for the [Turbo C](https://winworldpc.com/product/turbo-c/3x) code can be found [here](http://www.droberts.com/pcgpex/update.zip).
 
-This conversion has multiple improvements over the FreeBASIC version. These are:
+## FEATURES
 
 - Works natively on Windows, Linux & macOS
 - There are no [Allegro](https://github.com/liballeg/allegro5) dependencies unlike the [FreeBASIC version](https://github.com/a740g/AlienAlleyQB64/tree/648fe7202157055c1658c12fbf476dcc5c445fcb)
@@ -24,13 +24,22 @@ This conversion has multiple improvements over the FreeBASIC version. These are:
 - MIDI playback is handled using MIDI support in [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases)
 - Alt + Enter puts the game in window mode
 
+## USAGE
+
+- Clone the repository to a directory of your choice
+- Open Terminal and change to the directory using an appropriate OS command
+- Run `git submodule update --init --recursive` to initialize, fetch and checkout git submodules
+- Open *AlienAlley.bas* in the QB64-PE IDE and press `F5` to compile and run
+
+## NOTES
+
 The source port requires the latest version of [QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe/releases).
+
+## ASSETS
 
 Icon by [Good Stuff No Nonsense](https://iconarchive.com/artist/goodstuff-no-nonsense.html)
 
-As usual, I do not accept responsibility for any effects, adverse or otherwise, that this code may have on you, your computer, your sanity, your dog, and anything else that you can think of. Use it at your own risk.
-
-## Original Readme
+## ORIGINAL README
 
 ### ALIEN ALLEY
 

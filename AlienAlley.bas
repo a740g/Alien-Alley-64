@@ -13,7 +13,8 @@
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
-'$Include:'Common.bi'
+'$Include:'include/Common.bi'
+'$Include:'include/CRTLib.bi'
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -524,8 +525,7 @@ End Sub
 
 ' Draws the status area at the bottom of the screen showing the player's current score and shield strength
 Sub DrawHUD
-    Dim ScoreText As String * 6
-    Dim As Integer i, j, k, w, h
+    Dim As Integer i, j, w, h
 
     ' First draw the HUD panel onto the frame buffer. Our HUD was originally for 320 x 240; so we gotta stretch it
     PutImage (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap
@@ -534,15 +534,13 @@ Sub DrawHUD
     Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
     Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
 
-    ScoreText = Right$("000000" + LTrim$(Str$(Score)), 6)
     j = SCORE_NUMBERS_LEFT
     w = HUDDigitSize.x * 2
     h = HUDDigitSize.y * 2
 
     ' Render the score
-    For i = 1 To 6
-        k = Asc(ScoreText, i) - Asc("0")
-        PutImage (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(k)
+    For i = 5 To 0 Step -1
+        PutImage (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(GetDigitFromLong(Score, i))
         j = j + w
     Next
 End Sub
