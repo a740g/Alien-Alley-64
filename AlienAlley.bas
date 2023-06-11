@@ -20,6 +20,8 @@
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' METACOMMANDS
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
+$NoPrefix
+$Color:32
 $Asserts
 $Unstable:Midi
 $MidiSoundFont:Default
@@ -33,8 +35,8 @@ $VersionInfo:Comments=https://github.com/a740g
 $VersionInfo:InternalName=AlienAlley
 $VersionInfo:OriginalFilename=AlienAlley.exe
 $VersionInfo:FileDescription=Alien Alley executable
-$VersionInfo:FILEVERSION#=2,2,1,0
-$VersionInfo:PRODUCTVERSION#=2,2,0,0
+$VersionInfo:FILEVERSION#=2,3,0,0
+$VersionInfo:PRODUCTVERSION#=2,3,0,0
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,8 +85,6 @@ Const EXPLOSION_FRAME_REPEAT_COUNT = 3
 Const HIGH_SCORE_TEXT_LEN = 20
 Const HIGH_SCORE_FILENAME = "highscore.csv"
 Const NUM_HIGH_SCORES = 10
-Const TILE_WIDTH = 32 ' in pixels
-Const TILE_HEIGHT = 32
 Const NUM_TILES = 3
 Const UPDATES_PER_SECOND = 60
 ' Screen parameters
@@ -128,9 +128,7 @@ End Type
 Dim Shared Score As Long
 Dim Shared HeroShields As Integer
 Dim Shared HighScore(0 To NUM_HIGH_SCORES - 1) As HighScoreType
-Dim Shared MapLine(0 To (SCREEN_WIDTH / TILE_WIDTH) - 1) As Unsigned Byte ' each tile is 32x32. so 640 / 32 = 20 (index to Tile[])
 Dim Shared MapScrollStep As Integer ' # of pixels to scroll the background
-Dim Shared MapLineCounter As Integer ' this keeps track of the new tiles positions
 Dim Shared Hero As SpriteType
 Dim Shared Alien(0 To MAX_ALIENS - 1) As SpriteType
 Dim Shared HeroMissile(0 To MAX_HERO_MISSILES - 1) As SpriteType
@@ -145,17 +143,20 @@ Dim Shared AllowHeroFire As Byte
 ' Asset global variables
 Dim Shared ExplosionSound As Long ' sample handle
 Dim Shared LaserSound As Long ' sample handle
-Dim Shared HeroBitmap As Long
-Dim Shared AlienBitmap As Long
+Dim Shared HeroBitmap(0 To 1) As Long
+Dim Shared AlienBitmap(0 To 1) As Long
 Dim Shared MissileBitmap As Long
 Dim Shared MissileTrailUpBitmap As Long
 Dim Shared MissileTrailDnBitmap As Long
 Dim Shared ExplosionBitmap(0 To MAX_EXPLOSION_BITMAPS - 1) As Long
 Dim Shared TileBitmap(0 To NUM_TILES - 1) As Long
-Dim Shared MapBitmap As Long ' this is for the background tilemap
-Dim Shared MapBitmapTemp As Long ' this is for holding temporary copies of the map bitmap
-Dim Shared HUDBitmap As Long
+Dim Shared HUDBitmap(0 To 1) As Long
 Dim Shared HUDDigitBitmap(0 To 9) As Long
+ReDim Shared TileMap(0 To 0, 0 To 0) As Long ' bitmap for each tile position
+ReDim Shared TileMapY(0 To 0) As Long ' the y postion of the tile row
+Dim Shared TileMapSize As Vector2DType
+Dim Shared ShowFPS As Byte
+Dim Shared NoLimit As Byte
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -202,13 +203,20 @@ Do While Not Quit
             ClearInput
             DrawTitle = TRUE
 
+        Case KEY_F1
+            ShowFPS = Not ShowFPS
+
+        Case KEY_F7
+            NoLimit = Not NoLimit
+
         Case Else
             DrawTitle = FALSE
     End Select
 Loop
 
 ' Fade out
-Fade TRUE
+FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100
+
 ' Release all resources
 FinalizeProgram
 
@@ -219,13 +227,18 @@ System
 ' FUNCTIONS & SUBROUTINES
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 ' Loads an image and makes the bitmap transparent using a color key
-Function LoadPCX& (fileName As String)
-    Dim handle As Long
+Function LoadPCX& (fileName As String, transparentColor As Unsigned Long)
+    Dim handleSW As Long: handleSW = LoadImage(fileName, 32)
+    LoadPCX = handleSW ' save the handle just in case we need to bail
+    If handleSW >= -1 Then Exit Function ' bail if loading failed
 
-    handle = LoadImage(fileName, 256, "adaptive") ' Load the image as 8bpp (adaptive palette)
-    If handle < -1 Then ClearColor 0, handle ' Set index 0 to transparent. This works because the top-left corner in all our images is black
+    If transparentColor > 0 Then ClearColor transparentColor, handleSW ' make black pixels transparent
 
-    LoadPCX = handle
+    Dim handleHW As Long: handleHW = CopyImage(handleSW, 33) ' upload software image to GPU memory
+
+    FreeImage handleSW ' free the software image
+
+    LoadPCX = handleHW ' return the GPU image
 End Function
 
 
@@ -252,72 +265,42 @@ Sub ClearInput
 End Sub
 
 
-' Fades the screen from/to black
-Sub Fade (bOut As Byte)
-    ' Copy the whole screen to a temporary image buffer
-    Dim As Long tmp, w, h, i
-
-    tmp = CopyImage(0)
-    w = Width(tmp) - 1
-    h = Height(tmp) - 1
-
-    For i = 0 To 255
-        ' First bllit the image to the framebuffer
-        PutImage (0, 0), tmp
-        ' Now draw a black box over the image with changing alpha
-        If bOut Then
-            Line (0, 0)-(w, h), RGBA32(0, 0, 0, i), BF
-        Else
-            Line (0, 0)-(w, h), RGBA32(0, 0, 0, 255 - i), BF
-        End If
-
-        ' Flip the framebuffer
-        Display
-
-        ' Delay a bit
-        Limit UPDATES_PER_SECOND * 2
-    Next
-
-    FreeImage tmp
-End Sub
-
-
 ' Loads the hero, alien, and missile sprites and initializes the sprite structures
 Sub InitializeSprites
     Dim i As Integer
 
     ' Load hero spaceship
-    HeroBitmap = LoadPCX("dat/gfx/hero.pcx")
-    Assert HeroBitmap < -1
+    HeroBitmap(0) = LoadPCX("dat/gfx/hero0.pcx", Black)
+    Assert HeroBitmap(0) < -1
+    HeroBitmap(1) = LoadPCX("dat/gfx/hero1.pcx", Black)
+    Assert HeroBitmap(1) < -1
 
     ' Load alien spaceship
-    AlienBitmap = LoadPCX("dat/gfx/alien.pcx")
-    Assert AlienBitmap < -1
+    AlienBitmap(0) = LoadPCX("dat/gfx/alien0.pcx", Black)
+    Assert AlienBitmap(0) < -1
+    AlienBitmap(1) = LoadPCX("dat/gfx/alien1.pcx", Black)
+    Assert AlienBitmap(1) < -1
 
     ' Load missile
-    MissileBitmap = LoadPCX("dat/gfx/missile.pcx")
+    MissileBitmap = LoadPCX("dat/gfx/missile.pcx", Black)
     Assert MissileBitmap < -1
 
     ' Load missile trails
-    MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrail.pcx")
+    MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrailup.pcx", Black)
     Assert MissileTrailUpBitmap < -1
-
-    ' Generate and initialize the other trail
-    MissileTrailDnBitmap = NewImage(Width(MissileTrailUpBitmap), Height(MissileTrailUpBitmap))
+    MissileTrailDnBitmap = LoadPCX("dat/gfx/missiletraildn.pcx", Black)
     Assert MissileTrailDnBitmap < -1
-    ' Blit the missiletrailup v inverted
-    PutImage (0, Height(MissileTrailUpBitmap) - 1)-(Width(MissileTrailUpBitmap) - 1, 0), MissileTrailUpBitmap, MissileTrailDnBitmap
 
     ' Load explosion bitmaps
     For i = 0 To MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i + 1)) + ".pcx") ' file names are 1 based
+        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i)) + ".pcx", Black)
         Assert ExplosionBitmap(i) < -1
     Next
 
     ' Initialize Hero sprite
     Hero.isActive = TRUE
-    Hero.size.x = Width(HeroBitmap)
-    Hero.size.y = Height(HeroBitmap)
+    Hero.size.x = Width(HeroBitmap(0))
+    Hero.size.y = Height(HeroBitmap(0))
     Hero.boundary.a.x = 0
     Hero.boundary.a.y = 0
     Hero.boundary.b.x = SCREEN_WIDTH
@@ -331,8 +314,8 @@ Sub InitializeSprites
     ' Initialize alien sprites
     For i = 0 To MAX_ALIENS - 1
         Alien(i).isActive = FALSE
-        Alien(i).size.x = Width(AlienBitmap)
-        Alien(i).size.y = Height(AlienBitmap)
+        Alien(i).size.x = Width(AlienBitmap(0))
+        Alien(i).size.y = Height(AlienBitmap(0))
         Alien(i).boundary.a.x = 0
         Alien(i).boundary.b.x = SCREEN_WIDTH
         Alien(i).bDraw = FALSE
@@ -368,7 +351,7 @@ Sub InitializeSprites
 
     ' Set up gun blink stuff
     GunBlinkCounter = GUN_BLINK_RATE
-    GunBlinkState = TRUE
+    GunBlinkState = 1
 End Sub
 
 
@@ -383,8 +366,10 @@ Sub FinalizeSprites
     FreeImage MissileTrailDnBitmap
     FreeImage MissileTrailUpBitmap
     FreeImage MissileBitmap
-    FreeImage AlienBitmap
-    FreeImage HeroBitmap
+    FreeImage AlienBitmap(0)
+    FreeImage AlienBitmap(1)
+    FreeImage HeroBitmap(0)
+    FreeImage HeroBitmap(1)
 End Sub
 
 
@@ -496,14 +481,17 @@ Sub InitializeHUD
     Dim i As Integer
 
     ' Load the HUD bitmap
-    HUDBitmap = LoadPCX("dat/gfx/hud.pcx")
-    Assert HUDBitmap < -1
-    HUDSize.x = Width(HUDBitmap)
-    HUDSize.y = Height(HUDBitmap)
+    HUDBitmap(0) = LoadPCX("dat/gfx/hud0.pcx", Black)
+    Assert HUDBitmap(0) < -1
+    HUDBitmap(1) = LoadPCX("dat/gfx/hud1.pcx", Black)
+    Assert HUDBitmap(1) < -1
+
+    HUDSize.x = Width(HUDBitmap(0))
+    HUDSize.y = Height(HUDBitmap(0))
 
     ' Load the digit bitmaps
     For i = 0 To 9
-        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx")
+        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx", Black)
         Assert HUDDigitBitmap(i) < -1
     Next
     HUDDigitSize.x = Width(HUDDigitBitmap(0))
@@ -519,7 +507,8 @@ Sub FinalizeHUD
         FreeImage HUDDigitBitmap(i)
     Next
 
-    FreeImage HUDBitmap
+    FreeImage HUDBitmap(0)
+    FreeImage HUDBitmap(1)
 End Sub
 
 
@@ -528,7 +517,7 @@ Sub DrawHUD
     Dim As Integer i, j, w, h
 
     ' First draw the HUD panel onto the frame buffer. Our HUD was originally for 320 x 240; so we gotta stretch it
-    PutImage (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap
+    PutImage (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
 
     ' Update the shield status
     Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
@@ -548,99 +537,101 @@ End Sub
 
 ' Initialize the map with random tiles
 Sub InitializeMap
-    Dim As Integer x, y, w, h, c
-
-    ' Create the main tile buffer first
-    MapBitmap = NewImage(SCREEN_WIDTH, SCREEN_HEIGHT)
-    ' Create the temp tile buffer
-    MapBitmapTemp = CopyImage(MapBitmap)
+    Dim As Long x, y, c
 
     ' Load the background tiles
-    TileBitmap(0) = LoadImage("dat/gfx/stars1.pcx")
+    TileBitmap(0) = LoadPCX("dat/gfx/stars1.pcx", 0)
     Assert TileBitmap(0) < -1
-    TileBitmap(1) = LoadImage("dat/gfx/stars2.pcx")
+    TileBitmap(1) = LoadPCX("dat/gfx/stars2.pcx", 0)
     Assert TileBitmap(1) < -1
-    TileBitmap(2) = LoadImage("dat/gfx/earth.pcx")
+    TileBitmap(2) = LoadPCX("dat/gfx/earth.pcx", 0)
     Assert TileBitmap(2) < -1
+
+    TileMapSize.x = SCREEN_WIDTH \ Width(TileBitmap(0))
+    TileMapSize.y = SCREEN_HEIGHT \ Height(TileBitmap(0)) + 1 ' one more at the bottom for seemless scrolling
+
+    ' Tiles (n, 0) is always placed offscreen
+    ReDim TileMap(1 To TileMapSize.x, 0 To TileMapSize.y) As Long ' resize the tile map array
+    ReDim TileMapY(0 To TileMapSize.y) As Long ' resize the y position array
 
     ' Set other variables
     MapScrollStep = MAP_SCROLL_STEP_NORMAL
-    MapLineCounter = -TILE_HEIGHT
 
-    ' Just draw ramdom tiles on the background
-    w = (SCREEN_WIDTH / TILE_WIDTH) - 1
-    h = (SCREEN_HEIGHT / TILE_HEIGHT) - 1
-
-    For y = 0 To h
-        For x = 0 To w
+    ' Just set some ramdom tiles on the tile map
+    For y = 0 To TileMapSize.y
+        For x = 1 To TileMapSize.x
             ' We just need more stars and less planets
             c = Rnd * 256
             If c = 128 Then
                 c = NUM_TILES - 1
             Else
-                c = c Mod 2
+                c = c Mod (NUM_TILES - 1)
             End If
 
-            ' Blit the random tile
-            PutImage (x * TILE_WIDTH, y * TILE_HEIGHT), TileBitmap(c), MapBitmap
+            TileMap(x, y) = TileBitmap(c)
         Next
+        TileMapY(y) = Height(TileBitmap(0)) * y - Height(TileBitmap(0)) ' setup the y values for TileMapY
     Next
 End Sub
 
 
 ' Destroys the background tile map stuff
 Sub FinalizeMap
-    Dim i As Integer
+    Dim i As Long
 
     For i = 0 To NUM_TILES - 1
         FreeImage TileBitmap(i)
     Next
-
-    FreeImage MapBitmapTemp
-    FreeImage MapBitmap
 End Sub
 
 
 ' Scrolls the background using the backgound tiles
 Sub UpdateMap
-    Dim As Integer i, c
+    Dim As Long x, y, c
 
-    ' Check if all new tiles are completely shown; if so reset it
-    If MapLineCounter > 0 Then MapLineCounter = -TILE_HEIGHT
+    ' Shift all tiles down by "scrollstep" pixels
+    For y = 0 To TileMapSize.y
+        TileMapY(y) = TileMapY(y) + MapScrollStep
+    Next
 
-    ' Check if we have to generate a fresh set of tiles at the top of the map
-    If MapLineCounter <= -TILE_HEIGHT Then
-        ' Okay. Generate all the new tiles to be draw at the top of the map
-        For i = 0 To (SCREEN_WIDTH / TILE_WIDTH) - 1
+    ' Check if the first row is completely on-screen and if so add a fresh row on top
+    If TileMapY(0) >= 0 Then
+        ' Shift all tiles down a row so that the last one is removed
+        For y = TileMapSize.y To 1 Step -1
+            TileMapY(y) = TileMapY(y - 1)
+
+            For x = 1 To TileMapSize.x
+                TileMap(x, y) = TileMap(x, y - 1)
+            Next
+        Next
+
+        TileMapY(0) = -Height(TileBitmap(0)) ' set the tile to render completely offscreen
+
+        ' Generate a new row of tiles at the top of the map
+        For x = 1 To TileMapSize.x
             ' We just need more stars and less planets
             c = Rnd * 256
             If c = 128 Then
                 c = NUM_TILES - 1
             Else
-                c = c Mod 2
+                c = c Mod (NUM_TILES - 1)
             End If
 
-            MapLine(i) = c
+            TileMap(x, 0) = TileBitmap(c)
         Next
     End If
-
-    ' Shift the entire background down by "scrollstep" pixels
-    PutImage , MapBitmap, MapBitmapTemp
-    PutImage (0, MapScrollStep), MapBitmapTemp, MapBitmap
-
-    ' Move the new tiles down by "scrollstep"
-    MapLineCounter = MapLineCounter + MapScrollStep
-
-    ' Draw the new tiles at the top
-    For i = 0 To (SCREEN_WIDTH / TILE_WIDTH) - 1
-        PutImage (i * TILE_WIDTH, MapLineCounter), TileBitmap(MapLine(i)), MapBitmap
-    Next
 End Sub
 
 
-' Draws the map buffer to the frame buffer
+' Draws the tile map to the frame buffer
 Sub DrawMap
-    PutImage (0, 0), MapBitmap
+    Dim As Long x, y
+
+    For y = 0 To TileMapSize.y
+        For x = 1 To TileMapSize.x
+            PutImage ((x - 1) * Width(TileBitmap(0)), TileMapY(y)), TileMap(x, y)
+        Next
+    Next
 End Sub
 
 
@@ -696,9 +687,6 @@ End Sub
 Sub DrawHighScores
     Dim As Integer i
 
-    UpdateMap
-    DrawMap
-
     DrawStringCenter "####===-- HIGH SCORES --===####", 32, LemonYellow
     For i = 0 To NUM_HIGH_SCORES - 1
         DrawStringCenter Right$(" " + Str$(i + 1), 2) + ". " + Left$(HighScore(i).text + Space$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + Right$(Space$(4) + Str$(HighScore(i).score), 5), 64 + i * 32, SkyBlue
@@ -708,32 +696,26 @@ End Sub
 
 ' Displays the high score screen from the title page
 Sub DisplayHighScoresScreen
-    ' Fade out
-    Fade TRUE
-
-    ' Clear screen
-    Cls
-
-    DrawHighScores
-
-    ' Fade in
-    Fade FALSE
-
     ClearInput
 
     Do
+        Cls , 0
+
+        UpdateMap
+
+        DrawMap
         DrawHighScores
 
+        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
+
         Display
-        Limit UPDATES_PER_SECOND
+
+        If Not NoLimit Then Limit UPDATES_PER_SECOND
 
         Do While MouseInput
             If MouseButton(1) Or MouseButton(2) Or MouseButton(3) Then Exit Do
         Loop
     Loop While KeyHit <= NULL
-
-    ' Fade out
-    Fade TRUE
 End Sub
 
 
@@ -763,13 +745,6 @@ Sub NewHighScore (NewScore As Long)
     HighScore(i).text = NULLSTRING
     HighScore(i).score = NewScore
 
-    ' Clear screen
-    Cls
-
-    DrawHighScores
-
-    ' Fade in
-    Fade FALSE
 
     sPos = 0
     ClearInput
@@ -777,6 +752,10 @@ Sub NewHighScore (NewScore As Long)
 
     ' Get user text string
     Do
+        Cls , 0
+        UpdateMap
+
+        DrawMap
         DrawHighScores
         PrintString (228 + sPos * 8, 64 + i * 32), Chr$(179)
 
@@ -789,12 +768,12 @@ Sub NewHighScore (NewScore As Long)
             HighScore(i).text = Left$(HighScore(i).text, sPos)
         End If
 
-        Display
-        Limit UPDATES_PER_SECOND
-    Loop While k <> KEY_ENTER
+        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
 
-    ' Fade to black...
-    Fade TRUE
+        Display
+
+        If Not NoLimit Then Limit UPDATES_PER_SECOND
+    Loop While k <> KEY_ENTER
 End Sub
 
 
@@ -804,7 +783,7 @@ Sub DisplayTitlePage
     PlayMIDIFile "dat/sfx/mus/alienintro.mid"
 
     ' Clear screen
-    Cls
+    Cls , 0
 
     ' First page of stuff
     Dim tmp As Long
@@ -817,32 +796,32 @@ Sub DisplayTitlePage
     FreeImage tmp
 
     ' Fade in
-    Fade FALSE
+    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100
 End Sub
 
 
 ' Displays the introduction credits
 Sub DisplayIntroCredits
     ' Clear the screen
-    Cls
+    Cls , 0
 
     ' First page of stuff
     DrawStringCenter "Coriolis Group Books", 192, White
     DrawStringCenter "Presents", 208, White
 
-    Fade FALSE ' fade in
-    Fade TRUE ' fade out
+    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 
     ' Clear the screen
-    Cls
+    Cls , 0
 
     ' Second page of stuff
     DrawStringCenter "A", 176, White
     DrawStringCenter "Dave Roberts", 192, White
     DrawStringCenter "Production", 208, White
 
-    Fade FALSE ' fade in
-    Fade TRUE ' fade out
+    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 End Sub
 
 
@@ -1176,21 +1155,6 @@ Function EraseSprites%%
 End Function
 
 
-' Unlike the 8BPP version which changes the pallette, this changes the actual sprite pixels
-Sub BlinkGuns (bRed As Byte)
-    ' Just set the correct palette index to red / black
-    If bRed Then
-        PaletteColor 17, NP_Red, HeroBitmap
-        PaletteColor 48, Black, AlienBitmap
-        PaletteColor 121, NP_Red, HUDBitmap
-    Else
-        PaletteColor 17, Black, HeroBitmap
-        PaletteColor 48, NP_Red, AlienBitmap
-        PaletteColor 121, Black, HUDBitmap
-    End If
-End Sub
-
-
 ' Draw all active objects that should be drawn on the screen
 Sub DrawSprites
     Dim i As Integer
@@ -1227,19 +1191,18 @@ Sub DrawSprites
     ' Do aliens
     For i = 0 To MAX_ALIENS - 1
         If Alien(i).isActive And Alien(i).bDraw Then
-            PutImage (Alien(i).position.x, Alien(i).position.y), AlienBitmap
+            PutImage (Alien(i).position.x, Alien(i).position.y), AlienBitmap(GunBlinkState)
         End If
     Next
 
     ' Do player
     If Hero.isActive And Hero.bDraw Then
-        PutImage (Hero.position.x, Hero.position.y), HeroBitmap
+        PutImage (Hero.position.x, Hero.position.y), HeroBitmap(GunBlinkState)
     End If
 
     ' Blink the guns
     If GunBlinkCounter = 0 Then
-        BlinkGuns GunBlinkState
-        GunBlinkState = Not GunBlinkState ' Flip it to other state
+        GunBlinkState = 1 - GunBlinkState ' Flip it to other state
         GunBlinkCounter = GUN_BLINK_RATE
         AllowHeroFire = TRUE
     Else
@@ -1265,6 +1228,9 @@ Sub InitializeProgram
     ' Initialize graphics
     Screen NewImage(SCREEN_WIDTH, SCREEN_HEIGHT, 32)
 
+    ' We want all text rendering to be done over the hardware screen
+    DisplayOrder Hardware , Hardware1 , GLRender , Software
+
     ' Set to fullscreen. We can also go to windowed mode using Alt+Enter
     FullScreen SquarePixels , Smooth
 
@@ -1277,14 +1243,14 @@ Sub InitializeProgram
     ' We want the framebuffer to be updated when we want
     Display
 
-    ' We need the scrolling map during high score screens
+    ' Load game assets
     InitializeMap
 End Sub
 
 
 ' Releases all allocated resources (use before exiting)
 Sub FinalizeProgram
-    ' Free map resources
+    ' Free memory used by assets
     FinalizeMap
 
     ' Set framebuffer to autoupdate
@@ -1302,13 +1268,13 @@ End Sub
 Sub RunGame
     Dim As Byte UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire, GameOver
 
+    InitializeHUD
+    InitializeSprites
+
     ' Initialize all counters, etc.
     Score = 0
     AlienGenCounter = ALIEN_GEN_RATE_BASE
     HeroShields = MAX_HERO_SHIELDS
-
-    InitializeHUD
-    InitializeSprites
 
     ' Play the in-game music
     PlayMIDIFile "dat/sfx/mus/alienmain.mid"
@@ -1330,6 +1296,9 @@ Sub RunGame
         ' Erase any sprites if required
         GameOver = GameOver Or EraseSprites
 
+        ' Clear the screen
+        Cls , 0
+
         ' Scroll screen
         UpdateMap
 
@@ -1342,18 +1311,24 @@ Sub RunGame
         ' Draw game HUD
         DrawHUD
 
+        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
+
         ' Page flip
         Display
 
         ' Only run the loop the number of times we want
-        Limit UPDATES_PER_SECOND
+        If Not NoLimit Then Limit UPDATES_PER_SECOND
     Loop While Not GameOver
 
     FinalizeSprites
     FinalizeHUD
-
-    ' Fade to black...
-    Fade TRUE
 End Sub
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+' HEADER FILES
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'$Include:'include/GfxEx.bas'
+'---------------------------------------------------------------------------------------------------------------------------------------------------------------
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
