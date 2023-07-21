@@ -1,4 +1,4 @@
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 '      _    _ _                 _    _ _
 '     / \  | (_) ___ _ __      / \  | | | ___ _   _
 '    / _ \ | | |/ _ \ '_ \    / _ \ | | |/ _ \ | | |
@@ -8,164 +8,164 @@
 '
 '  Source port copyright (c) 2023 Samuel Gomes
 '
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-'$Include:'include/Common.bi'
-'$Include:'include/CRTLib.bi'
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
+'$INCLUDE:'include/TimeOps.bi'
+'$INCLUDE:'include/MathOps.bi'
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' METACOMMANDS
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-$NoPrefix
-$Color:32
-$Asserts
-$Unstable:Midi
-$MidiSoundFont:Default
-$ExeIcon:'./AlienAlley.ico'
-$VersionInfo:ProductName=Alien Alley
-$VersionInfo:CompanyName=Samuel Gomes
-$VersionInfo:LegalCopyright=Copyright (c) 2023 Samuel Gomes
-$VersionInfo:LegalTrademarks=All trademarks are property of their respective owners
-$VersionInfo:Web=https://github.com/a740g
-$VersionInfo:Comments=https://github.com/a740g
-$VersionInfo:InternalName=AlienAlley
-$VersionInfo:OriginalFilename=AlienAlley.exe
-$VersionInfo:FileDescription=Alien Alley executable
-$VersionInfo:FILEVERSION#=2,3,0,0
-$VersionInfo:PRODUCTVERSION#=2,3,0,0
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
+$NOPREFIX
+$COLOR:32
+$ASSERTS
+$UNSTABLE:MIDI
+$MIDISOUNDFONT:DEFAULT
+$EXEICON:'./AlienAlley.ico'
+$VERSIONINFO:ProductName=Alien Alley
+$VERSIONINFO:CompanyName=Samuel Gomes
+$VERSIONINFO:LegalCopyright=Copyright (c) 2023 Samuel Gomes
+$VERSIONINFO:LegalTrademarks=All trademarks are property of their respective owners
+$VERSIONINFO:Web=https://github.com/a740g
+$VERSIONINFO:Comments=https://github.com/a740g
+$VERSIONINFO:InternalName=AlienAlley
+$VERSIONINFO:OriginalFilename=AlienAlley.exe
+$VERSIONINFO:FileDescription=Alien Alley executable
+$VERSIONINFO:FILEVERSION#=2,4,0,0
+$VERSIONINFO:PRODUCTVERSION#=2,4,0,0
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' CONSTANTS
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' Game constants
-Const APP_NAME = "Alien Alley"
-Const MAX_ALIENS = 4
-Const MAX_ALIEN_MISSILES = 20
-Const MAX_HERO_MISSILES = 10
-Const MAX_EXPLOSIONS = MAX_ALIENS + 1 ' +1 for hero
-Const MAX_EXPLOSION_BITMAPS = 5
-Const GUN_BLINK_RATE = 20
-Const HERO_X_VELOCITY = 3
-Const HERO_Y_VELOCITY = 3
-Const ALIEN_X_VELOCITY = 3
-Const ALIEN_Y_VELOCITY = 2
-Const HERO_MISSILE_VELOCITY = 5
-Const ALIEN_MISSILE_VELOCITY = 4
-Const ALIEN_MOVE_TIME_VAR = 50
-Const ALIEN_MOVE_TIME_BASE = 20
-Const ALIEN_GEN_RATE_BASE = 40
-Const ALIEN_GEN_RATE_VAR = 40
-Const ALIEN_FIRE_LOCKOUT = 60
-Const ALIEN_FIRE_PROB_HERO = 20
-Const ALIEN_FIRE_PROB_RANDOM = 10
-Const ALIEN_PROX_THRESHOLD = 20
-Const HERO_GUN_OFFSET_LEFT = 3
-Const HERO_GUN_OFFSET_RIGHT = 26
-Const HERO_GUN_OFFSET_UP = 10
-Const ALIEN_GUN_OFFSET_LEFT = 4
-Const ALIEN_GUN_OFFSET_RIGHT = 25
-Const ALIEN_GUN_OFFSET_DOWN = 20
-Const DEATH_DELAY = 60 ' 1 sec delay after player death
-Const POINTS_PER_ALIEN = 10
-Const SHIELD_STATUS_WIDTH = 80
-Const SHIELD_STATUS_HEIGHT = 20
-Const SHIELD_STATUS_LEFT = 192
-Const SHIELD_STATUS_TOP = 360
-Const SHIELD_STATUS_RIGHT = SHIELD_STATUS_LEFT + SHIELD_STATUS_WIDTH - 1
-Const SHIELD_STATUS_BOTTOM = SHIELD_STATUS_TOP + SHIELD_STATUS_HEIGHT - 1
-Const MAX_HERO_SHIELDS = SHIELD_STATUS_WIDTH - 1
-Const SCORE_NUMBERS_LEFT = 474
-Const SCORE_NUMBERS_TOP = 363
-Const EXPLOSION_FRAME_REPEAT_COUNT = 3
-Const HIGH_SCORE_TEXT_LEN = 20
-Const HIGH_SCORE_FILENAME = "highscore.csv"
-Const NUM_HIGH_SCORES = 10
-Const NUM_TILES = 3
-Const UPDATES_PER_SECOND = 60
+CONST APP_NAME = "Alien Alley"
+CONST MAX_ALIENS = 4
+CONST MAX_ALIEN_MISSILES = 20
+CONST MAX_HERO_MISSILES = 10
+CONST MAX_EXPLOSIONS = MAX_ALIENS + 1 ' +1 for hero
+CONST MAX_EXPLOSION_BITMAPS = 5
+CONST GUN_BLINK_RATE = 20
+CONST HERO_X_VELOCITY = 3
+CONST HERO_Y_VELOCITY = 3
+CONST ALIEN_X_VELOCITY = 3
+CONST ALIEN_Y_VELOCITY = 2
+CONST HERO_MISSILE_VELOCITY = 5
+CONST ALIEN_MISSILE_VELOCITY = 4
+CONST ALIEN_MOVE_TIME_VAR = 50
+CONST ALIEN_MOVE_TIME_BASE = 20
+CONST ALIEN_GEN_RATE_BASE = 40
+CONST ALIEN_GEN_RATE_VAR = 40
+CONST ALIEN_FIRE_LOCKOUT = 60
+CONST ALIEN_FIRE_PROB_HERO = 20
+CONST ALIEN_FIRE_PROB_RANDOM = 10
+CONST ALIEN_PROX_THRESHOLD = 20
+CONST HERO_GUN_OFFSET_LEFT = 3
+CONST HERO_GUN_OFFSET_RIGHT = 26
+CONST HERO_GUN_OFFSET_UP = 10
+CONST ALIEN_GUN_OFFSET_LEFT = 4
+CONST ALIEN_GUN_OFFSET_RIGHT = 25
+CONST ALIEN_GUN_OFFSET_DOWN = 20
+CONST DEATH_DELAY = 60 ' 1 sec delay after player death
+CONST POINTS_PER_ALIEN = 10
+CONST SHIELD_STATUS_WIDTH = 80
+CONST SHIELD_STATUS_HEIGHT = 20
+CONST SHIELD_STATUS_LEFT = 192
+CONST SHIELD_STATUS_TOP = 360
+CONST SHIELD_STATUS_RIGHT = SHIELD_STATUS_LEFT + SHIELD_STATUS_WIDTH - 1
+CONST SHIELD_STATUS_BOTTOM = SHIELD_STATUS_TOP + SHIELD_STATUS_HEIGHT - 1
+CONST MAX_HERO_SHIELDS = SHIELD_STATUS_WIDTH - 1
+CONST SCORE_NUMBERS_LEFT = 474
+CONST SCORE_NUMBERS_TOP = 363
+CONST EXPLOSION_FRAME_REPEAT_COUNT = 3
+CONST HIGH_SCORE_TEXT_LEN = 20
+CONST HIGH_SCORE_FILENAME = "highscore.csv"
+CONST NUM_HIGH_SCORES = 10
+CONST NUM_TILES = 3
+CONST UPDATES_PER_SECOND = 60
 ' Screen parameters
-Const SCREEN_WIDTH = 640
-Const SCREEN_HEIGHT = 400
-Const STATUS_HEIGHT = 60 ' our HUD is 60 pixels now 30 * 2 in 640x400 mode
-Const REDUCED_SCREEN_HEIGHT = SCREEN_HEIGHT - STATUS_HEIGHT
+CONST SCREEN_WIDTH = 640
+CONST SCREEN_HEIGHT = 400
+CONST STATUS_HEIGHT = 60 ' our HUD is 60 pixels now 30 * 2 in 640x400 mode
+CONST REDUCED_SCREEN_HEIGHT = SCREEN_HEIGHT - STATUS_HEIGHT
 ' Scrolling parameters
-Const MAP_SCROLL_STEP_NORMAL = 1
-Const MAP_SCROLL_STEP_FAST = 2
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+CONST MAP_SCROLL_STEP_NORMAL = 1
+CONST MAP_SCROLL_STEP_FAST = 2
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' USER DEFINED TYPES
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Type Rectangle2DType
-    a As Vector2DType
-    b As Vector2DType
-End Type
+'-----------------------------------------------------------------------------------------------------------------------
+TYPE Rectangle2DType
+    a AS Vector2FType
+    b AS Vector2FType
+END TYPE
 
-Type SpriteType
-    isActive As Byte ' is this sprite active / in use?
-    size As Vector2DType ' size of the sprite
-    boundary As Rectangle2DType ' sprite should not leave this area
-    position As Vector2DType ' (left, top) position of the sprite on the 2D plane
-    velocity As Vector2DType ' velocity of the sprite
-    bDraw As Byte ' do we need to draw the sprite?
-    objSpec1 As Long ' special data 1
-    objSpec2 As Long ' special data 2
-End Type
+TYPE SpriteType
+    isActive AS BYTE ' is this sprite active / in use?
+    size AS Vector2FType ' size of the sprite
+    boundary AS Rectangle2DType ' sprite should not leave this area
+    position AS Vector2FType ' (left, top) position of the sprite on the 2D plane
+    velocity AS Vector2FType ' velocity of the sprite
+    bDraw AS BYTE ' do we need to draw the sprite?
+    objSpec1 AS LONG ' special data 1
+    objSpec2 AS LONG ' special data 2
+END TYPE
 
-Type HighScoreType
-    text As String
-    score As Long
-End Type
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+TYPE HighScoreType
+    text AS STRING
+    score AS LONG
+END TYPE
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' GLOBAL VARIABLES
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Dim Shared Score As Long
-Dim Shared HeroShields As Integer
-Dim Shared HighScore(0 To NUM_HIGH_SCORES - 1) As HighScoreType
-Dim Shared MapScrollStep As Integer ' # of pixels to scroll the background
-Dim Shared Hero As SpriteType
-Dim Shared Alien(0 To MAX_ALIENS - 1) As SpriteType
-Dim Shared HeroMissile(0 To MAX_HERO_MISSILES - 1) As SpriteType
-Dim Shared AlienMissile(0 To MAX_ALIEN_MISSILES - 1) As SpriteType
-Dim Shared Explosion(0 To MAX_EXPLOSIONS - 1) As SpriteType
-Dim Shared HUDSize As Vector2DType
-Dim Shared HUDDigitSize As Vector2DType
-Dim Shared AlienGenCounter As Integer
-Dim Shared GunBlinkCounter As Integer
-Dim Shared GunBlinkState As Byte
-Dim Shared AllowHeroFire As Byte
+'-----------------------------------------------------------------------------------------------------------------------
+DIM SHARED Score AS LONG
+DIM SHARED HeroShields AS INTEGER
+DIM SHARED HighScore(0 TO NUM_HIGH_SCORES - 1) AS HighScoreType
+DIM SHARED MapScrollStep AS INTEGER ' # of pixels to scroll the background
+DIM SHARED Hero AS SpriteType
+DIM SHARED Alien(0 TO MAX_ALIENS - 1) AS SpriteType
+DIM SHARED HeroMissile(0 TO MAX_HERO_MISSILES - 1) AS SpriteType
+DIM SHARED AlienMissile(0 TO MAX_ALIEN_MISSILES - 1) AS SpriteType
+DIM SHARED Explosion(0 TO MAX_EXPLOSIONS - 1) AS SpriteType
+DIM SHARED HUDSize AS Vector2FType
+DIM SHARED HUDDigitSize AS Vector2FType
+DIM SHARED AlienGenCounter AS INTEGER
+DIM SHARED GunBlinkCounter AS INTEGER
+DIM SHARED GunBlinkState AS BYTE
+DIM SHARED AllowHeroFire AS BYTE
 ' Asset global variables
-Dim Shared ExplosionSound As Long ' sample handle
-Dim Shared LaserSound As Long ' sample handle
-Dim Shared HeroBitmap(0 To 1) As Long
-Dim Shared AlienBitmap(0 To 1) As Long
-Dim Shared MissileBitmap As Long
-Dim Shared MissileTrailUpBitmap As Long
-Dim Shared MissileTrailDnBitmap As Long
-Dim Shared ExplosionBitmap(0 To MAX_EXPLOSION_BITMAPS - 1) As Long
-Dim Shared TileBitmap(0 To NUM_TILES - 1) As Long
-Dim Shared HUDBitmap(0 To 1) As Long
-Dim Shared HUDDigitBitmap(0 To 9) As Long
-ReDim Shared TileMap(0 To 0, 0 To 0) As Long ' bitmap for each tile position
-ReDim Shared TileMapY(0 To 0) As Long ' the y postion of the tile row
-Dim Shared TileMapSize As Vector2DType
-Dim Shared ShowFPS As Byte
-Dim Shared NoLimit As Byte
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+DIM SHARED ExplosionSound AS LONG ' sample handle
+DIM SHARED LaserSound AS LONG ' sample handle
+DIM SHARED HeroBitmap(0 TO 1) AS LONG
+DIM SHARED AlienBitmap(0 TO 1) AS LONG
+DIM SHARED MissileBitmap AS LONG
+DIM SHARED MissileTrailUpBitmap AS LONG
+DIM SHARED MissileTrailDnBitmap AS LONG
+DIM SHARED ExplosionBitmap(0 TO MAX_EXPLOSION_BITMAPS - 1) AS LONG
+DIM SHARED TileBitmap(0 TO NUM_TILES - 1) AS LONG
+DIM SHARED HUDBitmap(0 TO 1) AS LONG
+DIM SHARED HUDDigitBitmap(0 TO 9) AS LONG
+REDIM SHARED TileMap(0 TO 0, 0 TO 0) AS LONG ' bitmap for each tile position
+REDIM SHARED TileMapY(0 TO 0) AS LONG ' the y postion of the tile row
+DIM SHARED TileMapSize AS Vector2FType
+DIM SHARED ShowFPS AS BYTE
+DIM SHARED NoLimit AS BYTE
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' PROGRAM ENTRY POINT - Main program loop. Inits the program, draws intro screens and title pages,
 ' and waits for user to hit keystroke to indicated what they want to do
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Dim Quit As Byte
-Dim DrawTitle As Byte
-Dim k As Unsigned Long
+'-----------------------------------------------------------------------------------------------------------------------
+DIM Quit AS BYTE
+DIM DrawTitle AS BYTE
+DIM k AS UNSIGNED LONG
 
 ' We want the title page to show the first time
 DrawTitle = TRUE
@@ -177,130 +177,130 @@ DisplayIntroCredits
 ClearInput
 
 ' Main menu loop
-Do While Not Quit
+DO WHILE NOT Quit
     ' Draw title page (only if required)
-    If DrawTitle Then
+    IF DrawTitle THEN
         DisplayTitlePage
         DrawTitle = FALSE
-    End If
+    END IF
 
     ' Get a key from the user
-    k = KeyHit
+    k = KEYHIT
 
     ' Check what key was press and action it
-    Select Case k
-        Case KEY_ESCAPE, KEY_LOWER_Q, KEY_UPPER_Q
+    SELECT CASE k
+        CASE KEY_ESCAPE, KEY_LOWER_Q, KEY_UPPER_Q
             Quit = TRUE
 
-        Case KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, KEY_ENTER
+        CASE KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, KEY_ENTER
             RunGame
             NewHighScore Score
             ClearInput
             DrawTitle = TRUE
 
-        Case KEY_LOWER_S, KEY_UPPER_S
+        CASE KEY_LOWER_S, KEY_UPPER_S
             DisplayHighScoresScreen
             ClearInput
             DrawTitle = TRUE
 
-        Case KEY_F1
-            ShowFPS = Not ShowFPS
+        CASE KEY_F1
+            ShowFPS = NOT ShowFPS
 
-        Case KEY_F7
-            NoLimit = Not NoLimit
+        CASE KEY_F7
+            NoLimit = NOT NoLimit
 
-        Case Else
+        CASE ELSE
             DrawTitle = FALSE
-    End Select
-Loop
+    END SELECT
+LOOP
 
 ' Fade out
-FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100
+FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100
 
 ' Release all resources
 FinalizeProgram
 
-System
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYSTEM
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' FUNCTIONS & SUBROUTINES
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' Loads an image and makes the bitmap transparent using a color key
-Function LoadPCX& (fileName As String, transparentColor As Unsigned Long)
-    Dim handleSW As Long: handleSW = LoadImage(fileName, 32)
+FUNCTION LoadPCX& (fileName AS STRING, transparentColor AS UNSIGNED LONG)
+    DIM handleSW AS LONG: handleSW = LOADIMAGE(fileName, 32)
     LoadPCX = handleSW ' save the handle just in case we need to bail
-    If handleSW >= -1 Then Exit Function ' bail if loading failed
+    IF handleSW >= -1 THEN EXIT FUNCTION ' bail if loading failed
 
-    If transparentColor > 0 Then ClearColor transparentColor, handleSW ' make black pixels transparent
+    IF transparentColor > 0 THEN CLEARCOLOR transparentColor, handleSW ' make black pixels transparent
 
-    Dim handleHW As Long: handleHW = CopyImage(handleSW, 33) ' upload software image to GPU memory
+    DIM handleHW AS LONG: handleHW = COPYIMAGE(handleSW, 33) ' upload software image to GPU memory
 
-    FreeImage handleSW ' free the software image
+    FREEIMAGE handleSW ' free the software image
 
     LoadPCX = handleHW ' return the GPU image
-End Function
+END FUNCTION
 
 
 ' Calculates the bounding rectangle for a sprite given its position & size
-Sub GetRectangle (position As Vector2DType, size As Vector2DType, r As Rectangle2DType)
+SUB GetRectangle (position AS Vector2FType, size AS Vector2FType, r AS Rectangle2DType)
     r.a.x = position.x
     r.a.y = position.y
     r.b.x = position.x + size.x - 1
     r.b.y = position.y + size.y - 1
-End Sub
+END SUB
 
 
 ' Collision testing routine. This is a simple bounding box collision test
-Function RectanglesCollide%% (r1 As Rectangle2DType, r2 As Rectangle2DType)
-    RectanglesCollide = Not (r1.a.x > r2.b.x Or r2.a.x > r1.b.x Or r1.a.y > r2.b.y Or r2.a.y > r1.b.y)
-End Function
+FUNCTION RectanglesCollide%% (r1 AS Rectangle2DType, r2 AS Rectangle2DType)
+    RectanglesCollide = NOT (r1.a.x > r2.b.x OR r2.a.x > r1.b.x OR r1.a.y > r2.b.y OR r2.a.y > r1.b.y)
+END FUNCTION
 
 
 ' Chear mouse and keyboard events
-Sub ClearInput
-    Do While MouseInput
-    Loop
-    KeyClear
-End Sub
+SUB ClearInput
+    DO WHILE MOUSEINPUT
+    LOOP
+    KEYCLEAR
+END SUB
 
 
 ' Loads the hero, alien, and missile sprites and initializes the sprite structures
-Sub InitializeSprites
-    Dim i As Integer
+SUB InitializeSprites
+    DIM i AS INTEGER
 
     ' Load hero spaceship
     HeroBitmap(0) = LoadPCX("dat/gfx/hero0.pcx", Black)
-    Assert HeroBitmap(0) < -1
+    ASSERT HeroBitmap(0) < -1
     HeroBitmap(1) = LoadPCX("dat/gfx/hero1.pcx", Black)
-    Assert HeroBitmap(1) < -1
+    ASSERT HeroBitmap(1) < -1
 
     ' Load alien spaceship
     AlienBitmap(0) = LoadPCX("dat/gfx/alien0.pcx", Black)
-    Assert AlienBitmap(0) < -1
+    ASSERT AlienBitmap(0) < -1
     AlienBitmap(1) = LoadPCX("dat/gfx/alien1.pcx", Black)
-    Assert AlienBitmap(1) < -1
+    ASSERT AlienBitmap(1) < -1
 
     ' Load missile
     MissileBitmap = LoadPCX("dat/gfx/missile.pcx", Black)
-    Assert MissileBitmap < -1
+    ASSERT MissileBitmap < -1
 
     ' Load missile trails
     MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrailup.pcx", Black)
-    Assert MissileTrailUpBitmap < -1
+    ASSERT MissileTrailUpBitmap < -1
     MissileTrailDnBitmap = LoadPCX("dat/gfx/missiletraildn.pcx", Black)
-    Assert MissileTrailDnBitmap < -1
+    ASSERT MissileTrailDnBitmap < -1
 
     ' Load explosion bitmaps
-    For i = 0 To MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTrim$(Str$(i)) + ".pcx", Black)
-        Assert ExplosionBitmap(i) < -1
-    Next
+    FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
+        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", Black)
+        ASSERT ExplosionBitmap(i) < -1
+    NEXT
 
     ' Initialize Hero sprite
     Hero.isActive = TRUE
-    Hero.size.x = Width(HeroBitmap(0))
-    Hero.size.y = Height(HeroBitmap(0))
+    Hero.size.x = WIDTH(HeroBitmap(0))
+    Hero.size.y = HEIGHT(HeroBitmap(0))
     Hero.boundary.a.x = 0
     Hero.boundary.a.y = 0
     Hero.boundary.b.x = SCREEN_WIDTH
@@ -312,99 +312,99 @@ Sub InitializeSprites
     Hero.bDraw = TRUE
 
     ' Initialize alien sprites
-    For i = 0 To MAX_ALIENS - 1
+    FOR i = 0 TO MAX_ALIENS - 1
         Alien(i).isActive = FALSE
-        Alien(i).size.x = Width(AlienBitmap(0))
-        Alien(i).size.y = Height(AlienBitmap(0))
+        Alien(i).size.x = WIDTH(AlienBitmap(0))
+        Alien(i).size.y = HEIGHT(AlienBitmap(0))
         Alien(i).boundary.a.x = 0
         Alien(i).boundary.b.x = SCREEN_WIDTH
         Alien(i).bDraw = FALSE
-    Next
+    NEXT
 
     ' Initialize alien missiles
-    For i = 0 To MAX_ALIEN_MISSILES - 1
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
         AlienMissile(i).isActive = FALSE
-        AlienMissile(i).size.x = Width(MissileBitmap)
-        AlienMissile(i).size.y = Height(MissileBitmap)
-        AlienMissile(i).objSpec1 = Width(MissileTrailUpBitmap) ' Store these here
-        AlienMissile(i).objSpec2 = Height(MissileTrailUpBitmap) ' Store these here
+        AlienMissile(i).size.x = WIDTH(MissileBitmap)
+        AlienMissile(i).size.y = HEIGHT(MissileBitmap)
+        AlienMissile(i).objSpec1 = WIDTH(MissileTrailUpBitmap) ' Store these here
+        AlienMissile(i).objSpec2 = HEIGHT(MissileTrailUpBitmap) ' Store these here
         AlienMissile(i).bDraw = FALSE
-    Next
+    NEXT
 
     ' Initialize hero missiles
-    For i = 0 To MAX_HERO_MISSILES - 1
+    FOR i = 0 TO MAX_HERO_MISSILES - 1
         HeroMissile(i).isActive = FALSE
-        HeroMissile(i).size.x = Width(MissileBitmap)
-        HeroMissile(i).size.y = Height(MissileBitmap)
-        HeroMissile(i).objSpec1 = Width(MissileTrailUpBitmap) ' Store these here
-        HeroMissile(i).objSpec2 = Height(MissileTrailUpBitmap) ' Store these here
+        HeroMissile(i).size.x = WIDTH(MissileBitmap)
+        HeroMissile(i).size.y = HEIGHT(MissileBitmap)
+        HeroMissile(i).objSpec1 = WIDTH(MissileTrailUpBitmap) ' Store these here
+        HeroMissile(i).objSpec2 = HEIGHT(MissileTrailUpBitmap) ' Store these here
         HeroMissile(i).bDraw = FALSE
-    Next
+    NEXT
 
     ' Initialize explosions
-    For i = 0 To MAX_EXPLOSIONS - 1
+    FOR i = 0 TO MAX_EXPLOSIONS - 1
         Explosion(i).isActive = FALSE
-        Explosion(i).size.x = Width(ExplosionBitmap(0))
-        Explosion(i).size.y = Height(ExplosionBitmap(0))
+        Explosion(i).size.x = WIDTH(ExplosionBitmap(0))
+        Explosion(i).size.y = HEIGHT(ExplosionBitmap(0))
         Explosion(i).bDraw = FALSE
-    Next
+    NEXT
 
     ' Set up gun blink stuff
     GunBlinkCounter = GUN_BLINK_RATE
     GunBlinkState = 1
-End Sub
+END SUB
 
 
 ' Frees the memory occupied by the sprites
-Sub FinalizeSprites
-    Dim i As Integer
+SUB FinalizeSprites
+    DIM i AS INTEGER
 
-    For i = 0 To MAX_EXPLOSION_BITMAPS - 1
-        FreeImage ExplosionBitmap(i)
-    Next
+    FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
+        FREEIMAGE ExplosionBitmap(i)
+    NEXT
 
-    FreeImage MissileTrailDnBitmap
-    FreeImage MissileTrailUpBitmap
-    FreeImage MissileBitmap
-    FreeImage AlienBitmap(0)
-    FreeImage AlienBitmap(1)
-    FreeImage HeroBitmap(0)
-    FreeImage HeroBitmap(1)
-End Sub
+    FREEIMAGE MissileTrailDnBitmap
+    FREEIMAGE MissileTrailUpBitmap
+    FREEIMAGE MissileBitmap
+    FREEIMAGE AlienBitmap(0)
+    FREEIMAGE AlienBitmap(1)
+    FREEIMAGE HeroBitmap(0)
+    FREEIMAGE HeroBitmap(1)
+END SUB
 
 
 ' Updates the "UserInput..." variables used by the MoveSprites routine from supported input devices
 ' Return TRUE if ESC was pressed
 ' TODO: Add game controller support
-Function GetInput%% (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
-    Dim mouseMovement As Vector2DType
-    Dim mouseFire As Byte
+FUNCTION GetInput%% (UserInputUp AS BYTE, UserInputDown AS BYTE, UserInputLeft AS BYTE, UserInputRight AS BYTE, UserInputFire AS BYTE)
+    DIM mouseMovement AS Vector2FType
+    DIM mouseFire AS BYTE
 
     ' Collect and aggregate mouse input
     ' The mouse should not give undue advantage
-    Do While MouseInput
-        mouseMovement.x = mouseMovement.x + MouseMovementX
-        mouseMovement.y = mouseMovement.y + MouseMovementY
-        mouseFire = mouseFire Or MouseButton(1) Or MouseButton(2) Or MouseButton(3)
-    Loop
+    DO WHILE MOUSEINPUT
+        mouseMovement.x = mouseMovement.x + MOUSEMOVEMENTX
+        mouseMovement.y = mouseMovement.y + MOUSEMOVEMENTY
+        mouseFire = mouseFire OR MOUSEBUTTON(1) OR MOUSEBUTTON(2) OR MOUSEBUTTON(3)
+    LOOP
 
-    UserInputLeft = (mouseMovement.x < 0) Or KeyDown(KEY_LEFT_ARROW) Or KeyDown(KEY_UPPER_A) Or KeyDown(KEY_LOWER_A)
-    UserInputRight = (mouseMovement.x > 0) Or KeyDown(KEY_RIGHT_ARROW) Or KeyDown(KEY_UPPER_D) Or KeyDown(KEY_LOWER_D)
-    UserInputUp = (mouseMovement.y < 0) Or KeyDown(KEY_UP_ARROW) Or KeyDown(KEY_UPPER_W) Or KeyDown(KEY_LOWER_W)
-    UserInputDown = (mouseMovement.y > 0) Or KeyDown(KEY_DOWN_ARROW) Or KeyDown(KEY_UPPER_S) Or KeyDown(KEY_LOWER_S)
-    UserInputFire = mouseFire Or KeyDown(KEY_SPACE_BAR) Or KeyDown(KEY_LEFT_CONTROL) Or KeyDown(KEY_RIGHT_CONTROL) Or KeyDown(KEY_LEFT_ALT) Or KeyDown(KEY_RIGHT_ALT)
+    UserInputLeft = (mouseMovement.x < 0) OR KEYDOWN(KEY_LEFT_ARROW) OR KEYDOWN(KEY_UPPER_A) OR KEYDOWN(KEY_LOWER_A)
+    UserInputRight = (mouseMovement.x > 0) OR KEYDOWN(KEY_RIGHT_ARROW) OR KEYDOWN(KEY_UPPER_D) OR KEYDOWN(KEY_LOWER_D)
+    UserInputUp = (mouseMovement.y < 0) OR KEYDOWN(KEY_UP_ARROW) OR KEYDOWN(KEY_UPPER_W) OR KEYDOWN(KEY_LOWER_W)
+    UserInputDown = (mouseMovement.y > 0) OR KEYDOWN(KEY_DOWN_ARROW) OR KEYDOWN(KEY_UPPER_S) OR KEYDOWN(KEY_LOWER_S)
+    UserInputFire = mouseFire OR KEYDOWN(KEY_SPACE) OR KEYDOWN(KEY_LEFT_CONTROL) OR KEYDOWN(KEY_RIGHT_CONTROL) OR KEYDOWN(KEY_LEFT_ALT) OR KEYDOWN(KEY_RIGHT_ALT)
 
-    GetInput = KeyDown(KEY_ESCAPE)
-End Function
+    GetInput = KEYDOWN(KEY_ESCAPE)
+END FUNCTION
 
 
 ' Finds a non-active hero missile in the HeroMissile array and initializes it
 ' Return TRUE if it was successful
-Function CreateHeroMissile%% (x As Integer, y As Integer)
-    Dim i As Integer
+FUNCTION CreateHeroMissile%% (x AS INTEGER, y AS INTEGER)
+    DIM i AS INTEGER
 
-    For i = 0 To MAX_HERO_MISSILES - 1
-        If Not HeroMissile(i).isActive Then
+    FOR i = 0 TO MAX_HERO_MISSILES - 1
+        IF NOT HeroMissile(i).isActive THEN
             HeroMissile(i).isActive = TRUE
             HeroMissile(i).position.x = x
             HeroMissile(i).position.y = y
@@ -412,438 +412,438 @@ Function CreateHeroMissile%% (x As Integer, y As Integer)
             HeroMissile(i).velocity.y = -HERO_MISSILE_VELOCITY
             HeroMissile(i).bDraw = TRUE
             CreateHeroMissile = TRUE
-            Exit Function
-        End If
-    Next
+            EXIT FUNCTION
+        END IF
+    NEXT
 
     CreateHeroMissile = FALSE
-End Function
+END FUNCTION
 
 
 ' Finds a free alien in the Alien array and initializes it
-Sub CreateAlien
-    Dim i As Integer
+SUB CreateAlien
+    DIM i AS INTEGER
 
-    For i = 0 To MAX_ALIENS - 1
-        If Not Alien(i).isActive Then
+    FOR i = 0 TO MAX_ALIENS - 1
+        IF NOT Alien(i).isActive THEN
             Alien(i).isActive = TRUE
-            Alien(i).position.x = Rnd * (SCREEN_WIDTH - Alien(i).size.x)
+            Alien(i).position.x = RND * (SCREEN_WIDTH - Alien(i).size.x)
             Alien(i).position.y = -Alien(i).size.y
-            Alien(i).velocity.x = Rnd * ALIEN_X_VELOCITY + 1
-            Alien(i).velocity.y = Rnd * ALIEN_Y_VELOCITY + 1
-            Alien(i).objSpec1 = ALIEN_MOVE_TIME_BASE + Rnd * ALIEN_MOVE_TIME_VAR
+            Alien(i).velocity.x = RND * ALIEN_X_VELOCITY + 1
+            Alien(i).velocity.y = RND * ALIEN_Y_VELOCITY + 1
+            Alien(i).objSpec1 = ALIEN_MOVE_TIME_BASE + RND * ALIEN_MOVE_TIME_VAR
             Alien(i).objSpec2 = 0 ' ability to fire immediately
             Alien(i).bDraw = TRUE
-            Exit For
-        End If
-    Next
-End Sub
+            EXIT FOR
+        END IF
+    NEXT
+END SUB
 
 
 ' Finds a free alien missile in the AlienMissile array and initializes it.
 ' The x and y positions of the missile are set from the x and y parameters which will place them somewhere near an alien gun.
-Sub CreateAlienMissile (x As Integer, y As Integer)
-    Dim i As Integer
+SUB CreateAlienMissile (x AS INTEGER, y AS INTEGER)
+    DIM i AS INTEGER
 
-    For i = 0 To MAX_ALIEN_MISSILES - 1
-        If Not AlienMissile(i).isActive Then
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
+        IF NOT AlienMissile(i).isActive THEN
             AlienMissile(i).isActive = TRUE
             AlienMissile(i).position.x = x
             AlienMissile(i).position.y = y
             AlienMissile(i).velocity.x = 0
             AlienMissile(i).velocity.y = ALIEN_MISSILE_VELOCITY
             AlienMissile(i).bDraw = TRUE
-            Exit For
-        End If
-    Next
-End Sub
+            EXIT FOR
+        END IF
+    NEXT
+END SUB
 
 
 ' Starts an explosion occuring at the appropriate x and y coordinates.
-Sub CreateExplosion (position As Vector2DType)
-    Dim i As Integer
+SUB CreateExplosion (position AS Vector2FType)
+    DIM i AS INTEGER
 
-    For i = 0 To MAX_EXPLOSIONS - 1
-        If Not Explosion(i).isActive Then
+    FOR i = 0 TO MAX_EXPLOSIONS - 1
+        IF NOT Explosion(i).isActive THEN
             Explosion(i).isActive = TRUE
             Explosion(i).position = position
             Explosion(i).objSpec1 = 0 ' current explosion bitmap
             Explosion(i).objSpec2 = EXPLOSION_FRAME_REPEAT_COUNT
             Explosion(i).bDraw = TRUE
-            Exit For
-        End If
-    Next
-End Sub
+            EXIT FOR
+        END IF
+    NEXT
+END SUB
 
 
 ' Loads HUD bitmaps and initialize the HUD
-Sub InitializeHUD
-    Dim i As Integer
+SUB InitializeHUD
+    DIM i AS INTEGER
 
     ' Load the HUD bitmap
     HUDBitmap(0) = LoadPCX("dat/gfx/hud0.pcx", Black)
-    Assert HUDBitmap(0) < -1
+    ASSERT HUDBitmap(0) < -1
     HUDBitmap(1) = LoadPCX("dat/gfx/hud1.pcx", Black)
-    Assert HUDBitmap(1) < -1
+    ASSERT HUDBitmap(1) < -1
 
-    HUDSize.x = Width(HUDBitmap(0))
-    HUDSize.y = Height(HUDBitmap(0))
+    HUDSize.x = WIDTH(HUDBitmap(0))
+    HUDSize.y = HEIGHT(HUDBitmap(0))
 
     ' Load the digit bitmaps
-    For i = 0 To 9
-        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTrim$(Str$(i)) + ".pcx", Black)
-        Assert HUDDigitBitmap(i) < -1
-    Next
-    HUDDigitSize.x = Width(HUDDigitBitmap(0))
-    HUDDigitSize.y = Height(HUDDigitBitmap(0))
-End Sub
+    FOR i = 0 TO 9
+        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", Black)
+        ASSERT HUDDigitBitmap(i) < -1
+    NEXT
+    HUDDigitSize.x = WIDTH(HUDDigitBitmap(0))
+    HUDDigitSize.y = HEIGHT(HUDDigitBitmap(0))
+END SUB
 
 
 ' Destroys the HUD
-Sub FinalizeHUD
-    Dim i As Integer
+SUB FinalizeHUD
+    DIM i AS INTEGER
 
-    For i = 0 To 9
-        FreeImage HUDDigitBitmap(i)
-    Next
+    FOR i = 0 TO 9
+        FREEIMAGE HUDDigitBitmap(i)
+    NEXT
 
-    FreeImage HUDBitmap(0)
-    FreeImage HUDBitmap(1)
-End Sub
+    FREEIMAGE HUDBitmap(0)
+    FREEIMAGE HUDBitmap(1)
+END SUB
 
 
 ' Draws the status area at the bottom of the screen showing the player's current score and shield strength
-Sub DrawHUD
-    Dim As Integer i, j, w, h
+SUB DrawHUD
+    DIM AS INTEGER i, j, w, h
 
     ' First draw the HUD panel onto the frame buffer. Our HUD was originally for 320 x 240; so we gotta stretch it
-    PutImage (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
+    PUTIMAGE (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
 
     ' Update the shield status
-    Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
-    Line (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
+    LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
+    LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
 
     j = SCORE_NUMBERS_LEFT
     w = HUDDigitSize.x * 2
     h = HUDDigitSize.y * 2
 
     ' Render the score
-    For i = 5 To 0 Step -1
-        PutImage (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(GetDigitFromLong(Score, i))
+    FOR i = 5 TO 0 STEP -1
+        PUTIMAGE (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(GetDigitFromLong(Score, i))
         j = j + w
-    Next
-End Sub
+    NEXT
+END SUB
 
 
 ' Initialize the map with random tiles
-Sub InitializeMap
-    Dim As Long x, y, c
+SUB InitializeMap
+    DIM AS LONG x, y, c
 
     ' Load the background tiles
     TileBitmap(0) = LoadPCX("dat/gfx/stars1.pcx", 0)
-    Assert TileBitmap(0) < -1
+    ASSERT TileBitmap(0) < -1
     TileBitmap(1) = LoadPCX("dat/gfx/stars2.pcx", 0)
-    Assert TileBitmap(1) < -1
+    ASSERT TileBitmap(1) < -1
     TileBitmap(2) = LoadPCX("dat/gfx/earth.pcx", 0)
-    Assert TileBitmap(2) < -1
+    ASSERT TileBitmap(2) < -1
 
-    TileMapSize.x = SCREEN_WIDTH \ Width(TileBitmap(0))
-    TileMapSize.y = SCREEN_HEIGHT \ Height(TileBitmap(0)) + 1 ' one more at the bottom for seemless scrolling
+    TileMapSize.x = SCREEN_WIDTH \ WIDTH(TileBitmap(0))
+    TileMapSize.y = SCREEN_HEIGHT \ HEIGHT(TileBitmap(0)) + 1 ' one more at the bottom for seemless scrolling
 
     ' Tiles (n, 0) is always placed offscreen
-    ReDim TileMap(1 To TileMapSize.x, 0 To TileMapSize.y) As Long ' resize the tile map array
-    ReDim TileMapY(0 To TileMapSize.y) As Long ' resize the y position array
+    REDIM TileMap(1 TO TileMapSize.x, 0 TO TileMapSize.y) AS LONG ' resize the tile map array
+    REDIM TileMapY(0 TO TileMapSize.y) AS LONG ' resize the y position array
 
     ' Set other variables
     MapScrollStep = MAP_SCROLL_STEP_NORMAL
 
     ' Just set some ramdom tiles on the tile map
-    For y = 0 To TileMapSize.y
-        For x = 1 To TileMapSize.x
+    FOR y = 0 TO TileMapSize.y
+        FOR x = 1 TO TileMapSize.x
             ' We just need more stars and less planets
-            c = Rnd * 256
-            If c = 128 Then
+            c = RND * 256
+            IF c = 128 THEN
                 c = NUM_TILES - 1
-            Else
-                c = c Mod (NUM_TILES - 1)
-            End If
+            ELSE
+                c = c MOD (NUM_TILES - 1)
+            END IF
 
             TileMap(x, y) = TileBitmap(c)
-        Next
-        TileMapY(y) = Height(TileBitmap(0)) * y - Height(TileBitmap(0)) ' setup the y values for TileMapY
-    Next
-End Sub
+        NEXT
+        TileMapY(y) = HEIGHT(TileBitmap(0)) * y - HEIGHT(TileBitmap(0)) ' setup the y values for TileMapY
+    NEXT
+END SUB
 
 
 ' Destroys the background tile map stuff
-Sub FinalizeMap
-    Dim i As Long
+SUB FinalizeMap
+    DIM i AS LONG
 
-    For i = 0 To NUM_TILES - 1
-        FreeImage TileBitmap(i)
-    Next
-End Sub
+    FOR i = 0 TO NUM_TILES - 1
+        FREEIMAGE TileBitmap(i)
+    NEXT
+END SUB
 
 
 ' Scrolls the background using the backgound tiles
-Sub UpdateMap
-    Dim As Long x, y, c
+SUB UpdateMap
+    DIM AS LONG x, y, c
 
     ' Shift all tiles down by "scrollstep" pixels
-    For y = 0 To TileMapSize.y
+    FOR y = 0 TO TileMapSize.y
         TileMapY(y) = TileMapY(y) + MapScrollStep
-    Next
+    NEXT
 
     ' Check if the first row is completely on-screen and if so add a fresh row on top
-    If TileMapY(0) >= 0 Then
+    IF TileMapY(0) >= 0 THEN
         ' Shift all tiles down a row so that the last one is removed
-        For y = TileMapSize.y To 1 Step -1
+        FOR y = TileMapSize.y TO 1 STEP -1
             TileMapY(y) = TileMapY(y - 1)
 
-            For x = 1 To TileMapSize.x
+            FOR x = 1 TO TileMapSize.x
                 TileMap(x, y) = TileMap(x, y - 1)
-            Next
-        Next
+            NEXT
+        NEXT
 
-        TileMapY(0) = -Height(TileBitmap(0)) ' set the tile to render completely offscreen
+        TileMapY(0) = -HEIGHT(TileBitmap(0)) ' set the tile to render completely offscreen
 
         ' Generate a new row of tiles at the top of the map
-        For x = 1 To TileMapSize.x
+        FOR x = 1 TO TileMapSize.x
             ' We just need more stars and less planets
-            c = Rnd * 256
-            If c = 128 Then
+            c = RND * 256
+            IF c = 128 THEN
                 c = NUM_TILES - 1
-            Else
-                c = c Mod (NUM_TILES - 1)
-            End If
+            ELSE
+                c = c MOD (NUM_TILES - 1)
+            END IF
 
             TileMap(x, 0) = TileBitmap(c)
-        Next
-    End If
-End Sub
+        NEXT
+    END IF
+END SUB
 
 
 ' Draws the tile map to the frame buffer
-Sub DrawMap
-    Dim As Long x, y
+SUB DrawMap
+    DIM AS LONG x, y
 
-    For y = 0 To TileMapSize.y
-        For x = 1 To TileMapSize.x
-            PutImage ((x - 1) * Width(TileBitmap(0)), TileMapY(y)), TileMap(x, y)
-        Next
-    Next
-End Sub
+    FOR y = 0 TO TileMapSize.y
+        FOR x = 1 TO TileMapSize.x
+            PUTIMAGE ((x - 1) * WIDTH(TileBitmap(0)), TileMapY(y)), TileMap(x, y)
+        NEXT
+    NEXT
+END SUB
 
 
 ' Loads and plays a MIDI file (loops it too)
-Sub PlayMIDIFile (fileName As String)
-    Static MIDIHandle As Long ' Sound handle
+SUB PlayMIDIFile (fileName AS STRING)
+    STATIC MIDIHandle AS LONG ' Sound handle
 
     ' Unload if there is anything previously loaded
-    If MIDIHandle > 0 Then
-        SndStop MIDIHandle
-        SndClose MIDIHandle
+    IF MIDIHandle > 0 THEN
+        SNDSTOP MIDIHandle
+        SNDCLOSE MIDIHandle
         MIDIHandle = 0
-    End If
+    END IF
 
     ' Check if the file exists
-    If fileName <> NULLSTRING And FileExists(fileName) Then
-        MIDIHandle = SndOpen(fileName, "stream")
-        Assert MIDIHandle > 0
+    IF fileName <> EMPTY_STRING AND FILEEXISTS(fileName) THEN
+        MIDIHandle = SNDOPEN(fileName, "stream")
+        ASSERT MIDIHandle > 0
         ' Loop the MIDI file
-        If MIDIHandle > 0 Then SndLoop MIDIHandle
-    End If
-End Sub
+        IF MIDIHandle > 0 THEN SNDLOOP MIDIHandle
+    END IF
+END SUB
 
 
 ' Initialize sound stuff
-Sub InitializeSound
+SUB InitializeSound
     ' Load the sound effects
-    ExplosionSound = SndOpen("dat/sfx/snd/explode.wav")
-    Assert ExplosionSound > 0
-    LaserSound = SndOpen("dat/sfx/snd/laser.wav")
-    Assert LaserSound > 0
-End Sub
+    ExplosionSound = SNDOPEN("dat/sfx/snd/explode.wav")
+    ASSERT ExplosionSound > 0
+    LaserSound = SNDOPEN("dat/sfx/snd/laser.wav")
+    ASSERT LaserSound > 0
+END SUB
 
 
 ' Close all sound related stuff and frees resources
-Sub FinalizeSound
-    SndClose ExplosionSound
-    SndClose LaserSound
+SUB FinalizeSound
+    SNDCLOSE ExplosionSound
+    SNDCLOSE LaserSound
 
-    PlayMIDIFile NULLSTRING ' This is will unload whatever MIDI data is there in memory
-End Sub
+    PlayMIDIFile EMPTY_STRING ' This is will unload whatever MIDI data is there in memory
+END SUB
 
 
 ' Centers a string on the screen
 ' The function calculates the correct starting column position to center the string on the screen and then draws the actual text
-Sub DrawStringCenter (s As String, y As Long, c As Unsigned Long)
-    Color c
-    PrintString ((SCREEN_WIDTH \ 2) - (PrintWidth(s) \ 2), y), s
-End Sub
+SUB DrawStringCenter (s AS STRING, y AS LONG, c AS UNSIGNED LONG)
+    COLOR c
+    PRINTSTRING ((SCREEN_WIDTH \ 2) - (PRINTWIDTH(s) \ 2), y), s
+END SUB
 
 
 ' Displays the HighScore array on the screen.
-Sub DrawHighScores
-    Dim As Integer i
+SUB DrawHighScores
+    DIM AS INTEGER i
 
     DrawStringCenter "####===-- HIGH SCORES --===####", 32, LemonYellow
-    For i = 0 To NUM_HIGH_SCORES - 1
-        DrawStringCenter Right$(" " + Str$(i + 1), 2) + ". " + Left$(HighScore(i).text + Space$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + Right$(Space$(4) + Str$(HighScore(i).score), 5), 64 + i * 32, SkyBlue
-    Next
-End Sub
+    FOR i = 0 TO NUM_HIGH_SCORES - 1
+        DrawStringCenter RIGHT$(" " + STR$(i + 1), 2) + ". " + LEFT$(HighScore(i).text + SPACE$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + RIGHT$(SPACE$(4) + STR$(HighScore(i).score), 5), 64 + i * 32, SkyBlue
+    NEXT
+END SUB
 
 
 ' Displays the high score screen from the title page
-Sub DisplayHighScoresScreen
+SUB DisplayHighScoresScreen
     ClearInput
 
-    Do
-        Cls , 0
+    DO
+        CLS , 0
 
         UpdateMap
 
         DrawMap
         DrawHighScores
 
-        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
 
-        Display
+        DISPLAY
 
-        If Not NoLimit Then Limit UPDATES_PER_SECOND
+        IF NOT NoLimit THEN LIMIT UPDATES_PER_SECOND
 
-        Do While MouseInput
-            If MouseButton(1) Or MouseButton(2) Or MouseButton(3) Then Exit Do
-        Loop
-    Loop While KeyHit <= NULL
-End Sub
+        DO WHILE MOUSEINPUT
+            IF MOUSEBUTTON(1) OR MOUSEBUTTON(2) OR MOUSEBUTTON(3) THEN EXIT DO
+        LOOP
+    LOOP WHILE KEYHIT <= NULL
+END SUB
 
 
 ' Manipulates the HighScore array to make room for the users score and gets the new text
-Sub NewHighScore (NewScore As Long)
-    Dim As Integer i, sPos
-    Dim k As Unsigned Integer
+SUB NewHighScore (NewScore AS LONG)
+    DIM AS INTEGER i, sPos
+    DIM k AS UNSIGNED INTEGER
 
     ' Check to see if it's really a high score
-    If NewScore <= HighScore(NUM_HIGH_SCORES - 1).score Then Exit Sub
+    IF NewScore <= HighScore(NUM_HIGH_SCORES - 1).score THEN EXIT SUB
 
     ' Start high score music
     PlayMIDIFile "dat/sfx/mus/alienend.mid"
 
     ' Move other scores down to make room
-    For i = NUM_HIGH_SCORES - 2 To 0 Step -1
-        If NewScore > HighScore(i).score Then
+    FOR i = NUM_HIGH_SCORES - 2 TO 0 STEP -1
+        IF NewScore > HighScore(i).score THEN
             HighScore(i + 1).text = HighScore(i).text
             HighScore(i + 1).score = HighScore(i).score
-        Else
-            Exit For
-        End If
-    Next
+        ELSE
+            EXIT FOR
+        END IF
+    NEXT
     i = i + 1
 
     ' Blank out text of correct slot
-    HighScore(i).text = NULLSTRING
+    HighScore(i).text = EMPTY_STRING
     HighScore(i).score = NewScore
 
 
     sPos = 0
     ClearInput
-    Color DeepSkyBlue
+    COLOR DeepSkyBlue
 
     ' Get user text string
-    Do
-        Cls , 0
+    DO
+        CLS , 0
         UpdateMap
 
         DrawMap
         DrawHighScores
-        PrintString (228 + sPos * 8, 64 + i * 32), Chr$(179)
+        PRINTSTRING (228 + sPos * 8, 64 + i * 32), CHR$(179)
 
-        k = KeyHit
-        If k >= KEY_SPACE_BAR And k <= KEY_TILDE And sPos < HIGH_SCORE_TEXT_LEN Then
+        k = KEYHIT
+        IF k >= KEY_SPACE AND k <= KEY_TILDE AND sPos < HIGH_SCORE_TEXT_LEN THEN
             sPos = sPos + 1
-            HighScore(i).text = HighScore(i).text + Chr$(k)
-        ElseIf k = KEY_BACKSPACE And sPos > 0 Then
+            HighScore(i).text = HighScore(i).text + CHR$(k)
+        ELSEIF k = KEY_BACKSPACE AND sPos > 0 THEN
             sPos = sPos - 1
-            HighScore(i).text = Left$(HighScore(i).text, sPos)
-        End If
+            HighScore(i).text = LEFT$(HighScore(i).text, sPos)
+        END IF
 
-        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
 
-        Display
+        DISPLAY
 
-        If Not NoLimit Then Limit UPDATES_PER_SECOND
-    Loop While k <> KEY_ENTER
-End Sub
+        IF NOT NoLimit THEN LIMIT UPDATES_PER_SECOND
+    LOOP WHILE k <> KEY_ENTER
+END SUB
 
 
 ' Displays the Alien Alley title page
-Sub DisplayTitlePage
+SUB DisplayTitlePage
     ' Start title music
     PlayMIDIFile "dat/sfx/mus/alienintro.mid"
 
     ' Clear screen
-    Cls , 0
+    CLS , 0
 
     ' First page of stuff
-    Dim tmp As Long
-    tmp = LoadImage("dat/gfx/title.pcx")
-    Assert tmp < -1
+    DIM tmp AS LONG
+    tmp = LOADIMAGE("dat/gfx/title.pcx")
+    ASSERT tmp < -1
 
     ' Stretch bmp to fill the screen
-    PutImage (0, 0)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), tmp
+    PUTIMAGE (0, 0)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), tmp
 
-    FreeImage tmp
+    FREEIMAGE tmp
 
     ' Fade in
-    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100
-End Sub
+    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100
+END SUB
 
 
 ' Displays the introduction credits
-Sub DisplayIntroCredits
+SUB DisplayIntroCredits
     ' Clear the screen
-    Cls , 0
+    CLS , 0
 
     ' First page of stuff
     DrawStringCenter "Coriolis Group Books", 192, White
     DrawStringCenter "Presents", 208, White
 
-    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 
     ' Clear the screen
-    Cls , 0
+    CLS , 0
 
     ' Second page of stuff
     DrawStringCenter "A", 176, White
     DrawStringCenter "Dave Roberts", 192, White
     DrawStringCenter "Production", 208, White
 
-    FadeScreen Display, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    FadeScreen Display, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
-End Sub
+    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+END SUB
 
 
 ' Loads the high score file from disk
 ' If a high score file cannot be found or cannot be read, a default list of high-score entries is created
-Sub LoadHighScores
-    If FileExists(HIGH_SCORE_FILENAME) Then
-        Dim i As Integer
-        Dim hsFile As Long
+SUB LoadHighScores
+    IF FILEEXISTS(HIGH_SCORE_FILENAME) THEN
+        DIM i AS INTEGER
+        DIM hsFile AS LONG
 
         ' Open the highscore file; if there is a problem load defaults
-        hsFile = FreeFile
-        Open HIGH_SCORE_FILENAME For Input As hsFile
+        hsFile = FREEFILE
+        OPEN HIGH_SCORE_FILENAME FOR INPUT AS hsFile
 
         ' Read the name and the scores
-        For i = 0 To NUM_HIGH_SCORES - 1
-            Input #hsFile, HighScore(i).text, HighScore(i).score
-        Next
+        FOR i = 0 TO NUM_HIGH_SCORES - 1
+            INPUT #hsFile, HighScore(i).text, HighScore(i).score
+        NEXT
 
         ' Close file
-        Close hsFile
-    Else ' Load default highscores if there is no highscore file
+        CLOSE hsFile
+    ELSE ' Load default highscores if there is no highscore file
         HighScore(0).text = "Norman Bates"
         HighScore(0).score = 1000
 
@@ -873,160 +873,160 @@ Sub LoadHighScores
 
         HighScore(9).text = "Ace Ventura"
         HighScore(9).score = 100
-    End If
-End Sub
+    END IF
+END SUB
 
 
 ' Writes the HighScore array out to the high score file
-Sub SaveHighScores
-    Dim i As Integer
-    Dim hsFile As Long
+SUB SaveHighScores
+    DIM i AS INTEGER
+    DIM hsFile AS LONG
 
     ' Open the file for writing
-    hsFile = FreeFile
+    hsFile = FREEFILE
 
-    Open HIGH_SCORE_FILENAME For Output As hsFile
+    OPEN HIGH_SCORE_FILENAME FOR OUTPUT AS hsFile
 
-    For i = 0 To NUM_HIGH_SCORES - 1
-        Write #hsFile, HighScore(i).text, HighScore(i).score
-    Next
+    FOR i = 0 TO NUM_HIGH_SCORES - 1
+        WRITE #hsFile, HighScore(i).text, HighScore(i).score
+    NEXT
 
-    Close hsFile
-End Sub
+    CLOSE hsFile
+END SUB
 
 
 ' This moves the sprite based on the velocity and if there is a boundary specified then keeps it confined
-Sub UpdateSprite (s As SpriteType)
+SUB UpdateSprite (s AS SpriteType)
     ' First move the sprite
     s.position.x = s.position.x + s.velocity.x
     s.position.y = s.position.y + s.velocity.y
 
     ' Next limit movement if boundary is specified
-    If s.boundary.b.x > s.boundary.a.x Then
-        If s.position.x < s.boundary.a.x Then s.position.x = s.boundary.a.x
-        If s.position.x > s.boundary.b.x - s.size.x Then s.position.x = s.boundary.b.x - s.size.x
-    End If
-    If s.boundary.b.y > s.boundary.a.y Then
-        If s.position.y < s.boundary.a.y Then s.position.y = s.boundary.a.y
-        If s.position.y > s.boundary.b.y - s.size.y Then s.position.y = s.boundary.b.y - s.size.y
-    End If
-End Sub
+    IF s.boundary.b.x > s.boundary.a.x THEN
+        IF s.position.x < s.boundary.a.x THEN s.position.x = s.boundary.a.x
+        IF s.position.x > s.boundary.b.x - s.size.x THEN s.position.x = s.boundary.b.x - s.size.x
+    END IF
+    IF s.boundary.b.y > s.boundary.a.y THEN
+        IF s.position.y < s.boundary.a.y THEN s.position.y = s.boundary.a.y
+        IF s.position.y > s.boundary.b.y - s.size.y THEN s.position.y = s.boundary.b.y - s.size.y
+    END IF
+END SUB
 
 
 ' Takes care of moving hero ship and alien sprites, based on user input and their behavioral algorithms
 ' MoveSprites is also where missiles are generated and off-screen images are removed from play
-Sub MoveSprites (UserInputUp As Byte, UserInputDown As Byte, UserInputLeft As Byte, UserInputRight As Byte, UserInputFire As Byte)
-    Dim i As Integer
-    Dim AlienFireResult As Integer
-    Dim AlienProximity As Integer
+SUB MoveSprites (UserInputUp AS BYTE, UserInputDown AS BYTE, UserInputLeft AS BYTE, UserInputRight AS BYTE, UserInputFire AS BYTE)
+    DIM i AS INTEGER
+    DIM AlienFireResult AS INTEGER
+    DIM AlienProximity AS INTEGER
 
     ' First, take care of the hero
-    If UserInputUp Then Hero.velocity.y = -HERO_Y_VELOCITY
-    If UserInputDown Then Hero.velocity.y = HERO_Y_VELOCITY
-    If UserInputLeft Then Hero.velocity.x = -HERO_X_VELOCITY
-    If UserInputRight Then Hero.velocity.x = HERO_X_VELOCITY
+    IF UserInputUp THEN Hero.velocity.y = -HERO_Y_VELOCITY
+    IF UserInputDown THEN Hero.velocity.y = HERO_Y_VELOCITY
+    IF UserInputLeft THEN Hero.velocity.x = -HERO_X_VELOCITY
+    IF UserInputRight THEN Hero.velocity.x = HERO_X_VELOCITY
     UpdateSprite Hero
     ' Set these to zero so that we don't keep moving
     Hero.velocity.x = 0
     Hero.velocity.y = 0
 
     ' Update hero missiles
-    For i = 0 To MAX_HERO_MISSILES - 1
-        If HeroMissile(i).bDraw Then
+    FOR i = 0 TO MAX_HERO_MISSILES - 1
+        IF HeroMissile(i).bDraw THEN
             ' Update position
             UpdateSprite HeroMissile(i)
             ' Stop drawing when it's off screen
-            If HeroMissile(i).position.y < -(HeroMissile(i).size.y + HeroMissile(i).objSpec2) Then
+            IF HeroMissile(i).position.y < -(HeroMissile(i).size.y + HeroMissile(i).objSpec2) THEN
                 HeroMissile(i).bDraw = FALSE
-            End If
-        End If
-    Next
+            END IF
+        END IF
+    NEXT
 
     ' Generate hero missiles
-    If UserInputFire And AllowHeroFire And Hero.bDraw Then
-        If CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_LEFT, Hero.position.y + HERO_GUN_OFFSET_UP) And CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_RIGHT, Hero.position.y + HERO_GUN_OFFSET_UP) Then
-            SndPlayCopy LaserSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
-        End If
+    IF UserInputFire AND AllowHeroFire AND Hero.bDraw THEN
+        IF CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_LEFT, Hero.position.y + HERO_GUN_OFFSET_UP) AND CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_RIGHT, Hero.position.y + HERO_GUN_OFFSET_UP) THEN
+            SNDPLAYCOPY LaserSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
+        END IF
         AllowHeroFire = FALSE
-    End If
+    END IF
 
     ' Update alien missiles
-    For i = 0 To MAX_ALIEN_MISSILES - 1
-        If AlienMissile(i).bDraw Then
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
+        IF AlienMissile(i).bDraw THEN
             ' Update position
             UpdateSprite AlienMissile(i)
             ' Stop drawing when it's off screen
-            If AlienMissile(i).position.y > (SCREEN_HEIGHT + AlienMissile(i).size.y + AlienMissile(i).objSpec2) Then
+            IF AlienMissile(i).position.y > (SCREEN_HEIGHT + AlienMissile(i).size.y + AlienMissile(i).objSpec2) THEN
                 AlienMissile(i).bDraw = FALSE
-            End If
-        End If
-    Next
+            END IF
+        END IF
+    NEXT
 
     ' Move aliens
-    For i = 0 To MAX_ALIENS - 1
-        If Alien(i).bDraw Then
-            If Alien(i).objSpec1 = 0 Then
+    FOR i = 0 TO MAX_ALIENS - 1
+        IF Alien(i).bDraw THEN
+            IF Alien(i).objSpec1 = 0 THEN
                 ' Pick a new direction
-                If Int(Timer) Mod 2 Then
-                    Alien(i).velocity.x = Rnd * ALIEN_X_VELOCITY
-                Else
-                    Alien(i).velocity.x = Rnd * -ALIEN_X_VELOCITY
-                End If
-                Alien(i).objSpec1 = ALIEN_MOVE_TIME_BASE + Rnd * ALIEN_MOVE_TIME_VAR
-            Else
+                IF INT(TIMER) MOD 2 THEN
+                    Alien(i).velocity.x = RND * ALIEN_X_VELOCITY
+                ELSE
+                    Alien(i).velocity.x = RND * -ALIEN_X_VELOCITY
+                END IF
+                Alien(i).objSpec1 = ALIEN_MOVE_TIME_BASE + RND * ALIEN_MOVE_TIME_VAR
+            ELSE
                 Alien(i).objSpec1 = Alien(i).objSpec1 - 1
-            End If
+            END IF
             ' Update alien position
             UpdateSprite Alien(i)
 
             ' Move alien to top when it gets to bottom
-            If Alien(i).position.y > SCREEN_HEIGHT + Alien(i).size.y Then Alien(i).position.y = -Alien(i).size.y
+            IF Alien(i).position.y > SCREEN_HEIGHT + Alien(i).size.y THEN Alien(i).position.y = -Alien(i).size.y
 
             ' Generate alien missiles
-            If Alien(i).objSpec2 = 0 Then
-                AlienFireResult = Rnd * 100 ' in percent
+            IF Alien(i).objSpec2 = 0 THEN
+                AlienFireResult = RND * 100 ' in percent
                 AlienProximity = Alien(i).position.x - Hero.position.x
 
-                If AlienProximity < 0 Then AlienProximity = -AlienProximity
+                IF AlienProximity < 0 THEN AlienProximity = -AlienProximity
 
-                If ((AlienProximity < ALIEN_PROX_THRESHOLD) And (AlienFireResult < ALIEN_FIRE_PROB_HERO)) Or (AlienFireResult < ALIEN_FIRE_PROB_RANDOM) Then
+                IF ((AlienProximity < ALIEN_PROX_THRESHOLD) AND (AlienFireResult < ALIEN_FIRE_PROB_HERO)) OR (AlienFireResult < ALIEN_FIRE_PROB_RANDOM) THEN
                     CreateAlienMissile Alien(i).position.x + ALIEN_GUN_OFFSET_LEFT, Alien(i).position.y + ALIEN_GUN_OFFSET_DOWN
                     CreateAlienMissile Alien(i).position.x + ALIEN_GUN_OFFSET_RIGHT, Alien(i).position.y + ALIEN_GUN_OFFSET_DOWN
                     Alien(i).objSpec2 = ALIEN_FIRE_LOCKOUT
-                    SndPlayCopy LaserSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
-                End If
-            Else
+                    SNDPLAYCOPY LaserSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
+                END IF
+            ELSE
                 Alien(i).objSpec2 = Alien(i).objSpec2 - 1
-            End If
-        End If
-    Next
+            END IF
+        END IF
+    NEXT
 
     ' Generate aliens
-    If AlienGenCounter = 0 Then
+    IF AlienGenCounter = 0 THEN
         ' Generate an alien
         CreateAlien
         ' Reinit generate counter
-        AlienGenCounter = ALIEN_GEN_RATE_BASE + Rnd * ALIEN_GEN_RATE_VAR
-    Else
+        AlienGenCounter = ALIEN_GEN_RATE_BASE + RND * ALIEN_GEN_RATE_VAR
+    ELSE
         AlienGenCounter = AlienGenCounter - 1
-    End If
+    END IF
 
     ' Update explosions -- note, we don't really "move" them, just make the animation go
-    For i = 0 To MAX_EXPLOSIONS - 1
-        If Explosion(i).bDraw Then
-            If Explosion(i).objSpec2 = 0 Then
+    FOR i = 0 TO MAX_EXPLOSIONS - 1
+        IF Explosion(i).bDraw THEN
+            IF Explosion(i).objSpec2 = 0 THEN
                 Explosion(i).objSpec1 = Explosion(i).objSpec1 + 1
                 Explosion(i).objSpec2 = EXPLOSION_FRAME_REPEAT_COUNT
-                If Explosion(i).objSpec1 >= MAX_EXPLOSION_BITMAPS Then Explosion(i).bDraw = FALSE
-            Else
+                IF Explosion(i).objSpec1 >= MAX_EXPLOSION_BITMAPS THEN Explosion(i).bDraw = FALSE
+            ELSE
                 Explosion(i).objSpec2 = Explosion(i).objSpec2 - 1
-            End If
-        End If
-    Next
+            END IF
+        END IF
+    NEXT
 
     ' Check at what speed the map needs to be scrolled
-    If UserInputUp Then MapScrollStep = MAP_SCROLL_STEP_FAST Else MapScrollStep = MAP_SCROLL_STEP_NORMAL
-End Sub
+    IF UserInputUp THEN MapScrollStep = MAP_SCROLL_STEP_FAST ELSE MapScrollStep = MAP_SCROLL_STEP_NORMAL
+END SUB
 
 
 ' Check for collisions between various objects and start explosions if they collide
@@ -1035,189 +1035,189 @@ End Sub
 '   * aliens and hero missiles
 '   * hero and alien missiles
 ' Note that all tests are performed between objects that are currently being drawn, not just active objects
-Sub CheckCollisions
-    Dim As Integer i, j
-    Dim As Rectangle2DType r1, r2
+SUB CheckCollisions
+    DIM AS INTEGER i, j
+    DIM AS Rectangle2DType r1, r2
 
     ' Check between hero and aliens
-    For i = 0 To MAX_ALIENS - 1
+    FOR i = 0 TO MAX_ALIENS - 1
         ' Make sure both hero and alien are still being drawn
         ' They may still be active but have been removed from the screen and are just being erased
         ' If they are still onscreen, then perform a rectangle test
         GetRectangle Hero.position, Hero.size, r1
         GetRectangle Alien(i).position, Alien(i).size, r2
-        If Hero.bDraw And Alien(i).bDraw And RectanglesCollide(r1, r2) Then
+        IF Hero.bDraw AND Alien(i).bDraw AND RectanglesCollide(r1, r2) THEN
             Hero.bDraw = FALSE
             CreateExplosion Hero.position
             Alien(i).bDraw = FALSE
             CreateExplosion Alien(i).position
-            SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
-        End If
-    Next
+            SNDPLAYCOPY ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
+        END IF
+    NEXT
 
     ' Check between aliens and hero missiles
-    For i = 0 To MAX_ALIENS - 1
-        If Not Alien(i).bDraw Then Continue
+    FOR i = 0 TO MAX_ALIENS - 1
+        IF NOT Alien(i).bDraw THEN CONTINUE
 
-        For j = 0 To MAX_HERO_MISSILES - 1
+        FOR j = 0 TO MAX_HERO_MISSILES - 1
             ' Do similiar short circuit, mondo huge test as above
             GetRectangle Alien(i).position, Alien(i).size, r1
             GetRectangle HeroMissile(j).position, HeroMissile(j).size, r2
-            If HeroMissile(j).bDraw And RectanglesCollide(r1, r2) Then
+            IF HeroMissile(j).bDraw AND RectanglesCollide(r1, r2) THEN
                 Alien(i).bDraw = FALSE
                 HeroMissile(j).bDraw = FALSE
                 CreateExplosion Alien(i).position
                 Score = Score + POINTS_PER_ALIEN
-                SndPlayCopy ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
-                Exit For ' alien is destroyed
-            End If
-        Next
-    Next
+                SNDPLAYCOPY ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
+                EXIT FOR ' alien is destroyed
+            END IF
+        NEXT
+    NEXT
 
     ' Check between hero and alien missiles
-    For i = 0 To MAX_ALIEN_MISSILES - 1
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
         ' Again, rely on short circuiting
         GetRectangle Hero.position, Hero.size, r1
         GetRectangle AlienMissile(i).position, AlienMissile(i).size, r2
-        If AlienMissile(i).bDraw And Hero.bDraw And RectanglesCollide(r1, r2) Then
+        IF AlienMissile(i).bDraw AND Hero.bDraw AND RectanglesCollide(r1, r2) THEN
             AlienMissile(i).bDraw = FALSE ' destroy missile in any case
-            If HeroShields <= 0 Then
+            IF HeroShields <= 0 THEN
                 Hero.bDraw = FALSE
                 CreateExplosion Hero.position
-                SndPlayCopy ExplosionSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
-                Exit For ' hero is destroyed
-            Else
+                SNDPLAYCOPY ExplosionSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
+                EXIT FOR ' hero is destroyed
+            ELSE
                 ' take away a bit of shields
                 HeroShields = HeroShields - 5
-                If HeroShields < 0 Then HeroShields = 0
-            End If
-        End If
-    Next
-End Sub
+                IF HeroShields < 0 THEN HeroShields = 0
+            END IF
+        END IF
+    NEXT
+END SUB
 
 
 ' Erase all current bitmaps from the hidden screen
 ' If the erasure marks the last time that the object will be erased because it is no longer being drawn, deactivate the object
-Function EraseSprites%%
-    Dim i As Integer
-    Static DeathCounter As Unsigned Integer
+FUNCTION EraseSprites%%
+    DIM i AS INTEGER
+    STATIC DeathCounter AS UNSIGNED INTEGER
 
     EraseSprites = FALSE
 
     ' Do player and possibly deactivate
-    If Hero.isActive Then
-        If Not Hero.bDraw Then
+    IF Hero.isActive THEN
+        IF NOT Hero.bDraw THEN
             Hero.isActive = FALSE
             DeathCounter = DEATH_DELAY
-        End If
-    End If
+        END IF
+    END IF
 
     ' Erase and deactivate hero missiles
-    For i = 0 To MAX_HERO_MISSILES - 1
+    FOR i = 0 TO MAX_HERO_MISSILES - 1
         ' Deactivate missile if we aren't going to draw or erase it anymore
-        If Not HeroMissile(i).bDraw Then
+        IF NOT HeroMissile(i).bDraw THEN
             HeroMissile(i).isActive = FALSE
-        End If
-    Next
+        END IF
+    NEXT
 
     ' Erase and deactivate aliens
-    For i = 0 To MAX_ALIENS - 1
+    FOR i = 0 TO MAX_ALIENS - 1
         ' Deactive alien if it's been destroyed
-        If Not Alien(i).bDraw Then
+        IF NOT Alien(i).bDraw THEN
             Alien(i).isActive = FALSE
-        End If
-    Next
+        END IF
+    NEXT
 
     ' Erase and deactivate alien missiles
-    For i = 0 To MAX_ALIEN_MISSILES - 1
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
         ' deactivate missile if we aren't going to draw or erase it anymore
-        If Not AlienMissile(i).bDraw Then
+        IF NOT AlienMissile(i).bDraw THEN
             AlienMissile(i).isActive = FALSE
-        End If
-    Next
+        END IF
+    NEXT
 
     ' Erase and deactivate explosions
-    For i = 0 To MAX_EXPLOSIONS - 1
+    FOR i = 0 TO MAX_EXPLOSIONS - 1
         ' Deactivate if explosion has run its course
-        If Not Explosion(i).bDraw Then
+        IF NOT Explosion(i).bDraw THEN
             Explosion(i).isActive = FALSE
-        End If
-    Next
+        END IF
+    NEXT
 
     ' Hero has died - signal game over after brief delay
-    If Not Hero.isActive Then
-        If DeathCounter = 0 Then
+    IF NOT Hero.isActive THEN
+        IF DeathCounter = 0 THEN
             EraseSprites = TRUE
-        Else
+        ELSE
             DeathCounter = DeathCounter - 1
-        End If
-    End If
-End Function
+        END IF
+    END IF
+END FUNCTION
 
 
 ' Draw all active objects that should be drawn on the screen
-Sub DrawSprites
-    Dim i As Integer
+SUB DrawSprites
+    DIM i AS INTEGER
 
     ' Do explosions
-    For i = 0 To MAX_EXPLOSIONS - 1
-        If Explosion(i).bDraw Then
+    FOR i = 0 TO MAX_EXPLOSIONS - 1
+        IF Explosion(i).bDraw THEN
             ' draw explosion
-            PutImage (Explosion(i).position.x, Explosion(i).position.y), ExplosionBitmap(Explosion(i).objSpec1)
+            PUTIMAGE (Explosion(i).position.x, Explosion(i).position.y), ExplosionBitmap(Explosion(i).objSpec1)
 
-        End If
-    Next
+        END IF
+    NEXT
 
     ' Draw hero missiles
-    For i = 0 To MAX_HERO_MISSILES - 1
-        If HeroMissile(i).bDraw Then
+    FOR i = 0 TO MAX_HERO_MISSILES - 1
+        IF HeroMissile(i).bDraw THEN
             ' Draw missile itself
-            PutImage (HeroMissile(i).position.x, HeroMissile(i).position.y), MissileBitmap
+            PUTIMAGE (HeroMissile(i).position.x, HeroMissile(i).position.y), MissileBitmap
             ' Draw missile trail. Remember we stored missile height in objspec2
-            PutImage (HeroMissile(i).position.x, HeroMissile(i).position.y + HeroMissile(i).objSpec2), MissileTrailUpBitmap
-        End If
-    Next
+            PUTIMAGE (HeroMissile(i).position.x, HeroMissile(i).position.y + HeroMissile(i).objSpec2), MissileTrailUpBitmap
+        END IF
+    NEXT
 
     ' Draw alien missiles
-    For i = 0 To MAX_ALIEN_MISSILES - 1
-        If AlienMissile(i).bDraw Then
+    FOR i = 0 TO MAX_ALIEN_MISSILES - 1
+        IF AlienMissile(i).bDraw THEN
             ' Draw missile itself
-            PutImage (AlienMissile(i).position.x, AlienMissile(i).position.y), MissileBitmap
+            PUTIMAGE (AlienMissile(i).position.x, AlienMissile(i).position.y), MissileBitmap
             ' Draw missile trail. Again objspec2 has the missile height
-            PutImage (AlienMissile(i).position.x, AlienMissile(i).position.y - AlienMissile(i).objSpec2), MissileTrailDnBitmap
-        End If
-    Next
+            PUTIMAGE (AlienMissile(i).position.x, AlienMissile(i).position.y - AlienMissile(i).objSpec2), MissileTrailDnBitmap
+        END IF
+    NEXT
 
     ' Do aliens
-    For i = 0 To MAX_ALIENS - 1
-        If Alien(i).isActive And Alien(i).bDraw Then
-            PutImage (Alien(i).position.x, Alien(i).position.y), AlienBitmap(GunBlinkState)
-        End If
-    Next
+    FOR i = 0 TO MAX_ALIENS - 1
+        IF Alien(i).isActive AND Alien(i).bDraw THEN
+            PUTIMAGE (Alien(i).position.x, Alien(i).position.y), AlienBitmap(GunBlinkState)
+        END IF
+    NEXT
 
     ' Do player
-    If Hero.isActive And Hero.bDraw Then
-        PutImage (Hero.position.x, Hero.position.y), HeroBitmap(GunBlinkState)
-    End If
+    IF Hero.isActive AND Hero.bDraw THEN
+        PUTIMAGE (Hero.position.x, Hero.position.y), HeroBitmap(GunBlinkState)
+    END IF
 
     ' Blink the guns
-    If GunBlinkCounter = 0 Then
+    IF GunBlinkCounter = 0 THEN
         GunBlinkState = 1 - GunBlinkState ' Flip it to other state
         GunBlinkCounter = GUN_BLINK_RATE
         AllowHeroFire = TRUE
-    Else
+    ELSE
         GunBlinkCounter = GunBlinkCounter - 1
-    End If
-End Sub
+    END IF
+END SUB
 
 
 ' Performs all the program-wide initialization at start-up time
-Sub InitializeProgram
+SUB InitializeProgram
     ' Initialize some stuff
-    Randomize Timer
+    RANDOMIZE TIMER
 
     ' Set the Window title
-    Title APP_NAME
+    TITLE APP_NAME
 
     ' Load high-score file
     LoadHighScores
@@ -1226,47 +1226,47 @@ Sub InitializeProgram
     InitializeSound
 
     ' Initialize graphics
-    Screen NewImage(SCREEN_WIDTH, SCREEN_HEIGHT, 32)
+    SCREEN NEWIMAGE(SCREEN_WIDTH, SCREEN_HEIGHT, 32)
 
     ' We want all text rendering to be done over the hardware screen
-    DisplayOrder Hardware , Hardware1 , GLRender , Software
+    DISPLAYORDER HARDWARE , HARDWARE1 , GLRENDER , SOFTWARE
 
     ' Set to fullscreen. We can also go to windowed mode using Alt+Enter
-    FullScreen SquarePixels , Smooth
+    FULLSCREEN SQUAREPIXELS , SMOOTH
 
     ' We want transparent text rendering
-    PrintMode KeepBackground
+    PRINTMODE KEEPBACKGROUND
 
     ' Hide the mouse pointer
-    MouseHide
+    MOUSEHIDE
 
     ' We want the framebuffer to be updated when we want
-    Display
+    DISPLAY
 
     ' Load game assets
     InitializeMap
-End Sub
+END SUB
 
 
 ' Releases all allocated resources (use before exiting)
-Sub FinalizeProgram
+SUB FinalizeProgram
     ' Free memory used by assets
     FinalizeMap
 
     ' Set framebuffer to autoupdate
-    AutoDisplay
+    AUTODISPLAY
 
     ' Release sound resources (esp. MIDI here)
     FinalizeSound
 
     ' Save high scores
     SaveHighScores
-End Sub
+END SUB
 
 
 ' Run the game!
-Sub RunGame
-    Dim As Byte UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire, GameOver
+SUB RunGame
+    DIM AS BYTE UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire, GameOver
 
     InitializeHUD
     InitializeSprites
@@ -1283,7 +1283,7 @@ Sub RunGame
     GameOver = FALSE
 
     ' Main game loop
-    Do
+    DO
         ' Get user input
         GameOver = GetInput(UserInputUp, UserInputDown, UserInputLeft, UserInputRight, UserInputFire)
 
@@ -1294,10 +1294,10 @@ Sub RunGame
         CheckCollisions
 
         ' Erase any sprites if required
-        GameOver = GameOver Or EraseSprites
+        GameOver = GameOver OR EraseSprites
 
         ' Clear the screen
-        Cls , 0
+        CLS , 0
 
         ' Scroll screen
         UpdateMap
@@ -1311,24 +1311,24 @@ Sub RunGame
         ' Draw game HUD
         DrawHUD
 
-        If ShowFPS Then PrintString (0, 0), Str$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
 
         ' Page flip
-        Display
+        DISPLAY
 
         ' Only run the loop the number of times we want
-        If Not NoLimit Then Limit UPDATES_PER_SECOND
-    Loop While Not GameOver
+        IF NOT NoLimit THEN LIMIT UPDATES_PER_SECOND
+    LOOP WHILE NOT GameOver
 
     FinalizeSprites
     FinalizeHUD
-End Sub
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+END SUB
+'-----------------------------------------------------------------------------------------------------------------------
 
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-'$Include:'include/GfxEx.bas'
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-'---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+'-----------------------------------------------------------------------------------------------------------------------
+'$INCLUDE:'include/TimeOps.bas'
+'$INCLUDE:'include/GfxEx.bas'
+'-----------------------------------------------------------------------------------------------------------------------
+'-----------------------------------------------------------------------------------------------------------------------
