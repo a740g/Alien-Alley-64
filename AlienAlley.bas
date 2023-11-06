@@ -15,6 +15,7 @@
 '-----------------------------------------------------------------------------------------------------------------------
 '$INCLUDE:'include/TimeOps.bi'
 '$INCLUDE:'include/MathOps.bi'
+'$INCLUDE:'include/GraphicOps.bi'
 '-----------------------------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------------------------
@@ -26,17 +27,17 @@ $ASSERTS
 $UNSTABLE:MIDI
 $MIDISOUNDFONT:DEFAULT
 $EXEICON:'./AlienAlley.ico'
-$VERSIONINFO:ProductName=Alien Alley
-$VERSIONINFO:CompanyName=Samuel Gomes
-$VERSIONINFO:LegalCopyright=Copyright (c) 2023 Samuel Gomes
-$VERSIONINFO:LegalTrademarks=All trademarks are property of their respective owners
-$VERSIONINFO:Web=https://github.com/a740g
-$VERSIONINFO:Comments=https://github.com/a740g
-$VERSIONINFO:InternalName=AlienAlley
-$VERSIONINFO:OriginalFilename=AlienAlley.exe
-$VERSIONINFO:FileDescription=Alien Alley executable
-$VERSIONINFO:FILEVERSION#=2,4,0,0
-$VERSIONINFO:PRODUCTVERSION#=2,4,0,0
+$VERSIONINFO:ProductName='Alien Alley'
+$VERSIONINFO:CompanyName='Samuel Gomes'
+$VERSIONINFO:LegalCopyright='Copyright (c) 2023 Samuel Gomes'
+$VERSIONINFO:LegalTrademarks='All trademarks are property of their respective owners'
+$VERSIONINFO:Web='https://github.com/a740g'
+$VERSIONINFO:Comments='https://github.com/a740g'
+$VERSIONINFO:InternalName='AlienAlley'
+$VERSIONINFO:OriginalFilename='AlienAlley.exe'
+$VERSIONINFO:FileDescription='Alien Alley executable'
+$VERSIONINFO:FILEVERSION#=2,4,1,0
+$VERSIONINFO:PRODUCTVERSION#=2,4,1,0
 '-----------------------------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------------------------
@@ -215,7 +216,7 @@ DO WHILE NOT Quit
 LOOP
 
 ' Fade out
-FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100
+Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100
 
 ' Release all resources
 FinalizeProgram
@@ -226,21 +227,6 @@ SYSTEM
 '-----------------------------------------------------------------------------------------------------------------------
 ' FUNCTIONS & SUBROUTINES
 '-----------------------------------------------------------------------------------------------------------------------
-' Loads an image and makes the bitmap transparent using a color key
-FUNCTION LoadPCX& (fileName AS STRING, transparentColor AS UNSIGNED LONG)
-    DIM handleSW AS LONG: handleSW = LOADIMAGE(fileName, 32)
-    LoadPCX = handleSW ' save the handle just in case we need to bail
-    IF handleSW >= -1 THEN EXIT FUNCTION ' bail if loading failed
-
-    IF transparentColor > 0 THEN CLEARCOLOR transparentColor, handleSW ' make black pixels transparent
-
-    DIM handleHW AS LONG: handleHW = COPYIMAGE(handleSW, 33) ' upload software image to GPU memory
-
-    FREEIMAGE handleSW ' free the software image
-
-    LoadPCX = handleHW ' return the GPU image
-END FUNCTION
-
 
 ' Calculates the bounding rectangle for a sprite given its position & size
 SUB GetRectangle (position AS Vector2FType, size AS Vector2FType, r AS Rectangle2DType)
@@ -270,30 +256,30 @@ SUB InitializeSprites
     DIM i AS INTEGER
 
     ' Load hero spaceship
-    HeroBitmap(0) = LoadPCX("dat/gfx/hero0.pcx", Black)
+    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT HeroBitmap(0) < -1
-    HeroBitmap(1) = LoadPCX("dat/gfx/hero1.pcx", Black)
+    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT HeroBitmap(1) < -1
 
     ' Load alien spaceship
-    AlienBitmap(0) = LoadPCX("dat/gfx/alien0.pcx", Black)
+    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT AlienBitmap(0) < -1
-    AlienBitmap(1) = LoadPCX("dat/gfx/alien1.pcx", Black)
+    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT AlienBitmap(1) < -1
 
     ' Load missile
-    MissileBitmap = LoadPCX("dat/gfx/missile.pcx", Black)
+    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT MissileBitmap < -1
 
     ' Load missile trails
-    MissileTrailUpBitmap = LoadPCX("dat/gfx/missiletrailup.pcx", Black)
+    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT MissileTrailUpBitmap < -1
-    MissileTrailDnBitmap = LoadPCX("dat/gfx/missiletraildn.pcx", Black)
+    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, EMPTY_STRING, Black)
     ASSERT MissileTrailDnBitmap < -1
 
     ' Load explosion bitmaps
     FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = LoadPCX("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", Black)
+        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, EMPTY_STRING, Black)
         ASSERT ExplosionBitmap(i) < -1
     NEXT
 
@@ -481,9 +467,9 @@ SUB InitializeHUD
     DIM i AS INTEGER
 
     ' Load the HUD bitmap
-    HUDBitmap(0) = LoadPCX("dat/gfx/hud0.pcx", Black)
+    HUDBitmap(0) = Graphics_LoadImage("dat/gfx/hud0.pcx", FALSE, TRUE, "HQ2XA", Black)
     ASSERT HUDBitmap(0) < -1
-    HUDBitmap(1) = LoadPCX("dat/gfx/hud1.pcx", Black)
+    HUDBitmap(1) = Graphics_LoadImage("dat/gfx/hud1.pcx", FALSE, TRUE, "HQ2XA", Black)
     ASSERT HUDBitmap(1) < -1
 
     HUDSize.x = WIDTH(HUDBitmap(0))
@@ -491,7 +477,7 @@ SUB InitializeHUD
 
     ' Load the digit bitmaps
     FOR i = 0 TO 9
-        HUDDigitBitmap(i) = LoadPCX("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", Black)
+        HUDDigitBitmap(i) = Graphics_LoadImage("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, "HQ2XA", Black)
         ASSERT HUDDigitBitmap(i) < -1
     NEXT
     HUDDigitSize.x = WIDTH(HUDDigitBitmap(0))
@@ -517,19 +503,19 @@ SUB DrawHUD
     DIM AS INTEGER i, j, w, h
 
     ' First draw the HUD panel onto the frame buffer. Our HUD was originally for 320 x 240; so we gotta stretch it
-    PUTIMAGE (0, SCREEN_HEIGHT - HUDSize.y * 2)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
+    PUTIMAGE (0, SCREEN_HEIGHT - HUDSize.y)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
 
     ' Update the shield status
     LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
     LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
 
     j = SCORE_NUMBERS_LEFT
-    w = HUDDigitSize.x * 2
-    h = HUDDigitSize.y * 2
+    w = HUDDigitSize.x
+    h = HUDDigitSize.y
 
     ' Render the score
     FOR i = 5 TO 0 STEP -1
-        PUTIMAGE (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(GetDigitFromLong(Score, i))
+        PUTIMAGE (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(Math_GetDigitFromLong(Score, i))
         j = j + w
     NEXT
 END SUB
@@ -540,11 +526,11 @@ SUB InitializeMap
     DIM AS LONG x, y, c
 
     ' Load the background tiles
-    TileBitmap(0) = LoadPCX("dat/gfx/stars1.pcx", 0)
+    TileBitmap(0) = Graphics_LoadImage("dat/gfx/stars1.pcx", FALSE, TRUE, EMPTY_STRING, -1)
     ASSERT TileBitmap(0) < -1
-    TileBitmap(1) = LoadPCX("dat/gfx/stars2.pcx", 0)
+    TileBitmap(1) = Graphics_LoadImage("dat/gfx/stars2.pcx", FALSE, TRUE, EMPTY_STRING, -1)
     ASSERT TileBitmap(1) < -1
-    TileBitmap(2) = LoadPCX("dat/gfx/earth.pcx", 0)
+    TileBitmap(2) = Graphics_LoadImage("dat/gfx/earth.pcx", FALSE, TRUE, EMPTY_STRING, -1)
     ASSERT TileBitmap(2) < -1
 
     TileMapSize.x = SCREEN_WIDTH \ WIDTH(TileBitmap(0))
@@ -706,7 +692,7 @@ SUB DisplayHighScoresScreen
         DrawMap
         DrawHighScores
 
-        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(Time_GetHertz) + " FPS"
 
         DISPLAY
 
@@ -768,7 +754,7 @@ SUB NewHighScore (NewScore AS LONG)
             HighScore(i).text = LEFT$(HighScore(i).text, sPos)
         END IF
 
-        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(Time_GetHertz) + " FPS"
 
         DISPLAY
 
@@ -787,7 +773,7 @@ SUB DisplayTitlePage
 
     ' First page of stuff
     DIM tmp AS LONG
-    tmp = LOADIMAGE("dat/gfx/title.pcx")
+    tmp = LOADIMAGE("dat/gfx/title.pcx", 32, "HQ2XA")
     ASSERT tmp < -1
 
     ' Stretch bmp to fill the screen
@@ -796,7 +782,7 @@ SUB DisplayTitlePage
     FREEIMAGE tmp
 
     ' Fade in
-    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100
+    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100
 END SUB
 
 
@@ -809,8 +795,8 @@ SUB DisplayIntroCredits
     DrawStringCenter "Coriolis Group Books", 192, White
     DrawStringCenter "Presents", 208, White
 
-    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 
     ' Clear the screen
     CLS , 0
@@ -820,8 +806,8 @@ SUB DisplayIntroCredits
     DrawStringCenter "Dave Roberts", 192, White
     DrawStringCenter "Production", 208, White
 
-    FadeScreen DISPLAY, TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    FadeScreen DISPLAY, FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 END SUB
 
 
@@ -1311,7 +1297,7 @@ SUB RunGame
         ' Draw game HUD
         DrawHUD
 
-        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(GetFPS) + " FPS"
+        IF ShowFPS THEN PRINTSTRING (0, 0), STR$(Time_GetHertz) + " FPS"
 
         ' Page flip
         DISPLAY
@@ -1328,7 +1314,6 @@ END SUB
 '-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
 '-----------------------------------------------------------------------------------------------------------------------
-'$INCLUDE:'include/TimeOps.bas'
-'$INCLUDE:'include/GfxEx.bas'
+'$INCLUDE:'include/GraphicOps.bas'
 '-----------------------------------------------------------------------------------------------------------------------
 '-----------------------------------------------------------------------------------------------------------------------
