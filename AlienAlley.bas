@@ -22,7 +22,6 @@
 ' METACOMMANDS
 '-----------------------------------------------------------------------------------------------------------------------
 $NOPREFIX
-$COLOR:32
 $ASSERTS
 $UNSTABLE:MIDI
 $MIDISOUNDFONT:DEFAULT
@@ -256,30 +255,30 @@ SUB InitializeSprites
     DIM i AS INTEGER
 
     ' Load hero spaceship
-    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT HeroBitmap(0) < -1
-    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT HeroBitmap(1) < -1
 
     ' Load alien spaceship
-    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT AlienBitmap(0) < -1
-    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT AlienBitmap(1) < -1
 
     ' Load missile
-    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT MissileBitmap < -1
 
     ' Load missile trails
-    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT MissileTrailUpBitmap < -1
-    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, EMPTY_STRING, Black)
+    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
     ASSERT MissileTrailDnBitmap < -1
 
     ' Load explosion bitmaps
     FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, EMPTY_STRING, Black)
+        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
         ASSERT ExplosionBitmap(i) < -1
     NEXT
 
@@ -467,9 +466,9 @@ SUB InitializeHUD
     DIM i AS INTEGER
 
     ' Load the HUD bitmap
-    HUDBitmap(0) = Graphics_LoadImage("dat/gfx/hud0.pcx", FALSE, TRUE, "HQ2XA", Black)
+    HUDBitmap(0) = Graphics_LoadImage("dat/gfx/hud0.pcx", FALSE, TRUE, "HQ2XA", -1)
     ASSERT HUDBitmap(0) < -1
-    HUDBitmap(1) = Graphics_LoadImage("dat/gfx/hud1.pcx", FALSE, TRUE, "HQ2XA", Black)
+    HUDBitmap(1) = Graphics_LoadImage("dat/gfx/hud1.pcx", FALSE, TRUE, "HQ2XA", -1)
     ASSERT HUDBitmap(1) < -1
 
     HUDSize.x = WIDTH(HUDBitmap(0))
@@ -477,7 +476,7 @@ SUB InitializeHUD
 
     ' Load the digit bitmaps
     FOR i = 0 TO 9
-        HUDDigitBitmap(i) = Graphics_LoadImage("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, "HQ2XA", Black)
+        HUDDigitBitmap(i) = Graphics_LoadImage("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, "HQ2XA", -1)
         ASSERT HUDDigitBitmap(i) < -1
     NEXT
     HUDDigitSize.x = WIDTH(HUDDigitBitmap(0))
@@ -500,24 +499,24 @@ END SUB
 
 ' Draws the status area at the bottom of the screen showing the player's current score and shield strength
 SUB DrawHUD
-    DIM AS INTEGER i, j, w, h
-
-    ' First draw the HUD panel onto the frame buffer. Our HUD was originally for 320 x 240; so we gotta stretch it
-    PUTIMAGE (0, SCREEN_HEIGHT - HUDSize.y)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), HUDBitmap(GunBlinkState)
+    ' First draw the HUD panel onto the frame buffer
+    PUTIMAGE (0, SCREEN_HEIGHT - HUDSize.y), HUDBitmap(GunBlinkState)
 
     ' Update the shield status
-    LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM), RGB32(255 - (255 * HeroShields / MAX_HERO_SHIELDS), 255 * HeroShields / MAX_HERO_SHIELDS, 0), BF
-    LINE (SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP)-(SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM), White, B , &B1001001001001001
+    Graphics_DrawFilledRectangle SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP, SHIELD_STATUS_RIGHT, SHIELD_STATUS_BOTTOM, BGRA_RED
+    IF HeroShields > 0 THEN
+        Graphics_DrawFilledRectangle SHIELD_STATUS_LEFT, SHIELD_STATUS_TOP, SHIELD_STATUS_LEFT + HeroShields, SHIELD_STATUS_BOTTOM, BGRA_LIME
+    END IF
 
-    j = SCORE_NUMBERS_LEFT
-    w = HUDDigitSize.x
-    h = HUDDigitSize.y
+    DIM j AS LONG: j = SCORE_NUMBERS_LEFT
+    DIM w AS LONG: w = HUDDigitSize.x
+    DIM h AS LONG: h = HUDDigitSize.y
 
     ' Render the score
-    FOR i = 5 TO 0 STEP -1
+    DIM i AS LONG: FOR i = 5 TO 0 STEP -1
         PUTIMAGE (j, SCORE_NUMBERS_TOP)-(j + w - 1, SCORE_NUMBERS_TOP + h), HUDDigitBitmap(Math_GetDigitFromLong(Score, i))
         j = j + w
-    NEXT
+    NEXT i
 END SUB
 
 
@@ -673,9 +672,9 @@ END SUB
 SUB DrawHighScores
     DIM AS INTEGER i
 
-    DrawStringCenter "####===-- HIGH SCORES --===####", 32, LemonYellow
+    DrawStringCenter "####===-- HIGH SCORES --===####", 32, BGRA_LEMONYELLOW
     FOR i = 0 TO NUM_HIGH_SCORES - 1
-        DrawStringCenter RIGHT$(" " + STR$(i + 1), 2) + ". " + LEFT$(HighScore(i).text + SPACE$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + RIGHT$(SPACE$(4) + STR$(HighScore(i).score), 5), 64 + i * 32, SkyBlue
+        DrawStringCenter RIGHT$(" " + STR$(i + 1), 2) + ". " + LEFT$(HighScore(i).text + SPACE$(HIGH_SCORE_TEXT_LEN), HIGH_SCORE_TEXT_LEN) + "  " + RIGHT$(SPACE$(4) + STR$(HighScore(i).score), 5), 64 + i * 32, BGRA_SKYBLUE
     NEXT
 END SUB
 
@@ -685,7 +684,7 @@ SUB DisplayHighScoresScreen
     ClearInput
 
     DO
-        CLS , 0
+        CLS , 0 ' black with no alpha
 
         UpdateMap
 
@@ -734,11 +733,11 @@ SUB NewHighScore (NewScore AS LONG)
 
     sPos = 0
     ClearInput
-    COLOR DeepSkyBlue
+    COLOR BGRA_DEEPSKYBLUE
 
     ' Get user text string
     DO
-        CLS , 0
+        CLS , 0 ' black with no alpha
         UpdateMap
 
         DrawMap
@@ -769,16 +768,16 @@ SUB DisplayTitlePage
     PlayMIDIFile "dat/sfx/mus/alienintro.mid"
 
     ' Clear screen
-    CLS , 0
+    CLS , 0 ' black with no alpha
 
     ' First page of stuff
-    DIM tmp AS LONG
-    tmp = LOADIMAGE("dat/gfx/title.pcx", 32, "HQ2XA")
+    DIM tmp AS LONG: tmp = Graphics_LoadImage("dat/gfx/title.pcx", FALSE, FALSE, "HQ2XA", -1)
     ASSERT tmp < -1
 
     ' Stretch bmp to fill the screen
-    PUTIMAGE (0, 0)-(SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1), tmp
+    PUTIMAGE , tmp
 
+    ' Free the image
     FREEIMAGE tmp
 
     ' Fade in
@@ -789,22 +788,22 @@ END SUB
 ' Displays the introduction credits
 SUB DisplayIntroCredits
     ' Clear the screen
-    CLS , 0
+    CLS , 0 ' black with no alpha
 
     ' First page of stuff
-    DrawStringCenter "Coriolis Group Books", 192, White
-    DrawStringCenter "Presents", 208, White
+    DrawStringCenter "Coriolis Group Books", 192, BGRA_RED
+    DrawStringCenter "Presents", 208, BGRA_RED
 
     Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
     Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 
     ' Clear the screen
-    CLS , 0
+    CLS , 0 ' black with no alpha
 
     ' Second page of stuff
-    DrawStringCenter "A", 176, White
-    DrawStringCenter "Dave Roberts", 192, White
-    DrawStringCenter "Production", 208, White
+    DrawStringCenter "A", 176, BGRA_RED
+    DrawStringCenter "Dave Roberts", 192, BGRA_RED
+    DrawStringCenter "Production", 208, BGRA_RED
 
     Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
     Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
@@ -1283,7 +1282,7 @@ SUB RunGame
         GameOver = GameOver OR EraseSprites
 
         ' Clear the screen
-        CLS , 0
+        CLS , 0 ' black with no alpha
 
         ' Scroll screen
         UpdateMap
