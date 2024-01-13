@@ -15,6 +15,7 @@
 '-----------------------------------------------------------------------------------------------------------------------
 '$INCLUDE:'include/TimeOps.bi'
 '$INCLUDE:'include/MathOps.bi'
+'$INCLUDE:'include/StringOps.bi'
 '$INCLUDE:'include/GraphicOps.bi'
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -255,30 +256,30 @@ SUB InitializeSprites
     DIM i AS INTEGER
 
     ' Load hero spaceship
-    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT HeroBitmap(0) < -1
-    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT HeroBitmap(1) < -1
 
     ' Load alien spaceship
-    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT AlienBitmap(0) < -1
-    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT AlienBitmap(1) < -1
 
     ' Load missile
-    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT MissileBitmap < -1
 
     ' Load missile trails
-    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT MissileTrailUpBitmap < -1
-    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
     ASSERT MissileTrailDnBitmap < -1
 
     ' Load explosion bitmaps
     FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, EMPTY_STRING, BGRA_BLACK)
+        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
         ASSERT ExplosionBitmap(i) < -1
     NEXT
 
@@ -525,11 +526,11 @@ SUB InitializeMap
     DIM AS LONG x, y, c
 
     ' Load the background tiles
-    TileBitmap(0) = Graphics_LoadImage("dat/gfx/stars1.pcx", FALSE, TRUE, EMPTY_STRING, -1)
+    TileBitmap(0) = Graphics_LoadImage("dat/gfx/stars1.pcx", FALSE, TRUE, STRING_EMPTY, -1)
     ASSERT TileBitmap(0) < -1
-    TileBitmap(1) = Graphics_LoadImage("dat/gfx/stars2.pcx", FALSE, TRUE, EMPTY_STRING, -1)
+    TileBitmap(1) = Graphics_LoadImage("dat/gfx/stars2.pcx", FALSE, TRUE, STRING_EMPTY, -1)
     ASSERT TileBitmap(1) < -1
-    TileBitmap(2) = Graphics_LoadImage("dat/gfx/earth.pcx", FALSE, TRUE, EMPTY_STRING, -1)
+    TileBitmap(2) = Graphics_LoadImage("dat/gfx/earth.pcx", FALSE, TRUE, STRING_EMPTY, -1)
     ASSERT TileBitmap(2) < -1
 
     TileMapSize.x = SCREEN_WIDTH \ WIDTH(TileBitmap(0))
@@ -632,7 +633,7 @@ SUB PlayMIDIFile (fileName AS STRING)
     END IF
 
     ' Check if the file exists
-    IF fileName <> EMPTY_STRING AND FILEEXISTS(fileName) THEN
+    IF FILEEXISTS(fileName) THEN
         MIDIHandle = SNDOPEN(fileName, "stream")
         ASSERT MIDIHandle > 0
         ' Loop the MIDI file
@@ -656,7 +657,7 @@ SUB FinalizeSound
     SNDCLOSE ExplosionSound
     SNDCLOSE LaserSound
 
-    PlayMIDIFile EMPTY_STRING ' This is will unload whatever MIDI data is there in memory
+    PlayMIDIFile STRING_EMPTY ' This is will unload whatever MIDI data is there in memory
 END SUB
 
 
@@ -727,7 +728,7 @@ SUB NewHighScore (NewScore AS LONG)
     i = i + 1
 
     ' Blank out text of correct slot
-    HighScore(i).text = EMPTY_STRING
+    HighScore(i).text = STRING_EMPTY
     HighScore(i).score = NewScore
 
 
@@ -1313,6 +1314,7 @@ END SUB
 '-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
 '-----------------------------------------------------------------------------------------------------------------------
+'$INCLUDE:'include/StringOps.bas'
 '$INCLUDE:'include/GraphicOps.bas'
 '-----------------------------------------------------------------------------------------------------------------------
 '-----------------------------------------------------------------------------------------------------------------------
