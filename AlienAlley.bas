@@ -24,8 +24,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 $NOPREFIX
 $ASSERTS
-$UNSTABLE:MIDI
-$MIDISOUNDFONT:DEFAULT
 $EXEICON:'./AlienAlley.ico'
 $VERSIONINFO:ProductName='Alien Alley'
 $VERSIONINFO:CompanyName='Samuel Gomes'
@@ -38,6 +36,9 @@ $VERSIONINFO:OriginalFilename='AlienAlley.exe'
 $VERSIONINFO:FileDescription='Alien Alley executable'
 $VERSIONINFO:FILEVERSION#=2,4,1,0
 $VERSIONINFO:PRODUCTVERSION#=2,4,1,0
+$RESIZE:SMOOTH
+$UNSTABLE:MIDI
+$MIDISOUNDFONT:DEFAULT
 '-----------------------------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------------------------
