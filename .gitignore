@@ -10,3 +10,5 @@
 *.exe
 # Ignore highscore file
 highscore.csv
+#macOS files
+*.command

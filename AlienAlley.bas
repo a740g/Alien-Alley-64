@@ -37,8 +37,6 @@ $VERSIONINFO:FileDescription='Alien Alley executable'
 $VERSIONINFO:FILEVERSION#=2,4,1,0
 $VERSIONINFO:PRODUCTVERSION#=2,4,1,0
 $RESIZE:SMOOTH
-$UNSTABLE:MIDI
-$MIDISOUNDFONT:DEFAULT
 '-----------------------------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------------------------
@@ -635,7 +633,7 @@ SUB PlayMIDIFile (fileName AS STRING)
 
     ' Check if the file exists
     IF FILEEXISTS(fileName) THEN
-        MIDIHandle = SNDOPEN(fileName, "stream")
+        MIDIHandle = SNDOPEN(fileName)
         ASSERT MIDIHandle > 0
         ' Loop the MIDI file
         IF MIDIHandle > 0 THEN SNDLOOP MIDIHandle
