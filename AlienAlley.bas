@@ -167,7 +167,7 @@ DIM DrawTitle AS _BYTE
 DIM k AS _UNSIGNED LONG
 
 ' We want the title page to show the first time
-DrawTitle = TRUE
+DrawTitle = _TRUE
 ' Initialize everything we need
 InitializeProgram
 ' Display the into credits screen
@@ -180,7 +180,7 @@ DO WHILE NOT Quit
     ' Draw title page (only if required)
     IF DrawTitle THEN
         DisplayTitlePage
-        DrawTitle = FALSE
+        DrawTitle = _FALSE
     END IF
 
     ' Get a key from the user
@@ -188,33 +188,33 @@ DO WHILE NOT Quit
 
     ' Check what key was press and action it
     SELECT CASE k
-        CASE KEY_ESCAPE, KEY_LOWER_Q, KEY_UPPER_Q
-            Quit = TRUE
+        CASE _KEY_ESC, KEY_LOWER_Q, KEY_UPPER_Q
+            Quit = _TRUE
 
-        CASE KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, KEY_ENTER
+        CASE KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, _KEY_ENTER
             RunGame
             NewHighScore Score
             ClearInput
-            DrawTitle = TRUE
+            DrawTitle = _TRUE
 
         CASE KEY_LOWER_S, KEY_UPPER_S
             DisplayHighScoresScreen
             ClearInput
-            DrawTitle = TRUE
+            DrawTitle = _TRUE
 
-        CASE KEY_F1
+        CASE _KEY_F1
             ShowFPS = NOT ShowFPS
 
-        CASE KEY_F7
+        CASE _KEY_F7
             NoLimit = NOT NoLimit
 
         CASE ELSE
-            DrawTitle = FALSE
+            DrawTitle = _FALSE
     END SELECT
 LOOP
 
 ' Fade out
-Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100
+Graphics_FadeScreen _FALSE, UPDATES_PER_SECOND * 2, 100
 
 ' Release all resources
 FinalizeProgram
@@ -254,35 +254,35 @@ SUB InitializeSprites
     DIM i AS INTEGER
 
     ' Load hero spaceship
-    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    HeroBitmap(0) = Graphics_LoadImage("dat/gfx/hero0.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT HeroBitmap(0) < -1
-    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    HeroBitmap(1) = Graphics_LoadImage("dat/gfx/hero1.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT HeroBitmap(1) < -1
 
     ' Load alien spaceship
-    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    AlienBitmap(0) = Graphics_LoadImage("dat/gfx/alien0.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT AlienBitmap(0) < -1
-    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    AlienBitmap(1) = Graphics_LoadImage("dat/gfx/alien1.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT AlienBitmap(1) < -1
 
     ' Load missile
-    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    MissileBitmap = Graphics_LoadImage("dat/gfx/missile.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT MissileBitmap < -1
 
     ' Load missile trails
-    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    MissileTrailUpBitmap = Graphics_LoadImage("dat/gfx/missiletrailup.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT MissileTrailUpBitmap < -1
-    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+    MissileTrailDnBitmap = Graphics_LoadImage("dat/gfx/missiletraildn.pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
     _ASSERT MissileTrailDnBitmap < -1
 
     ' Load explosion bitmaps
     FOR i = 0 TO MAX_EXPLOSION_BITMAPS - 1
-        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, STRING_EMPTY, BGRA_BLACK)
+        ExplosionBitmap(i) = Graphics_LoadImage("dat/gfx/explosion" + LTRIM$(STR$(i)) + ".pcx", _FALSE, _TRUE, _STR_EMPTY, BGRA_BLACK)
         _ASSERT ExplosionBitmap(i) < -1
     NEXT
 
     ' Initialize Hero sprite
-    Hero.isActive = TRUE
+    Hero.isActive = _TRUE
     Hero.size.x = _WIDTH(HeroBitmap(0))
     Hero.size.y = _HEIGHT(HeroBitmap(0))
     Hero.boundary.a.x = 0
@@ -293,44 +293,44 @@ SUB InitializeSprites
     Hero.position.y = ((Hero.boundary.b.y - Hero.boundary.a.y) / 2) - Hero.size.y / 2
     Hero.velocity.x = HERO_X_VELOCITY
     Hero.velocity.y = HERO_Y_VELOCITY
-    Hero.bDraw = TRUE
+    Hero.bDraw = _TRUE
 
     ' Initialize alien sprites
     FOR i = 0 TO MAX_ALIENS - 1
-        Alien(i).isActive = FALSE
+        Alien(i).isActive = _FALSE
         Alien(i).size.x = _WIDTH(AlienBitmap(0))
         Alien(i).size.y = _HEIGHT(AlienBitmap(0))
         Alien(i).boundary.a.x = 0
         Alien(i).boundary.b.x = SCREEN_WIDTH
-        Alien(i).bDraw = FALSE
+        Alien(i).bDraw = _FALSE
     NEXT
 
     ' Initialize alien missiles
     FOR i = 0 TO MAX_ALIEN_MISSILES - 1
-        AlienMissile(i).isActive = FALSE
+        AlienMissile(i).isActive = _FALSE
         AlienMissile(i).size.x = _WIDTH(MissileBitmap)
         AlienMissile(i).size.y = _HEIGHT(MissileBitmap)
         AlienMissile(i).objSpec1 = _WIDTH(MissileTrailUpBitmap) ' Store these here
         AlienMissile(i).objSpec2 = _HEIGHT(MissileTrailUpBitmap) ' Store these here
-        AlienMissile(i).bDraw = FALSE
+        AlienMissile(i).bDraw = _FALSE
     NEXT
 
     ' Initialize hero missiles
     FOR i = 0 TO MAX_HERO_MISSILES - 1
-        HeroMissile(i).isActive = FALSE
+        HeroMissile(i).isActive = _FALSE
         HeroMissile(i).size.x = _WIDTH(MissileBitmap)
         HeroMissile(i).size.y = _HEIGHT(MissileBitmap)
         HeroMissile(i).objSpec1 = _WIDTH(MissileTrailUpBitmap) ' Store these here
         HeroMissile(i).objSpec2 = _HEIGHT(MissileTrailUpBitmap) ' Store these here
-        HeroMissile(i).bDraw = FALSE
+        HeroMissile(i).bDraw = _FALSE
     NEXT
 
     ' Initialize explosions
     FOR i = 0 TO MAX_EXPLOSIONS - 1
-        Explosion(i).isActive = FALSE
+        Explosion(i).isActive = _FALSE
         Explosion(i).size.x = _WIDTH(ExplosionBitmap(0))
         Explosion(i).size.y = _HEIGHT(ExplosionBitmap(0))
-        Explosion(i).bDraw = FALSE
+        Explosion(i).bDraw = _FALSE
     NEXT
 
     ' Set up gun blink stuff
@@ -358,7 +358,7 @@ END SUB
 
 
 ' Updates the "UserInput..." variables used by the MoveSprites routine from supported input devices
-' Return TRUE if ESC was pressed
+' Return _TRUE if ESC was pressed
 ' TODO: Add game controller support
 FUNCTION GetInput%% (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS _BYTE, UserInputRight AS _BYTE, UserInputFire AS _BYTE)
     DIM mouseMovement AS Vector2FType
@@ -372,35 +372,35 @@ FUNCTION GetInput%% (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft
         mouseFire = mouseFire OR _MOUSEBUTTON(1) OR _MOUSEBUTTON(2) OR _MOUSEBUTTON(3)
     LOOP
 
-    UserInputLeft = (mouseMovement.x < 0) OR _KEYDOWN(KEY_LEFT_ARROW) OR _KEYDOWN(KEY_UPPER_A) OR _KEYDOWN(KEY_LOWER_A)
-    UserInputRight = (mouseMovement.x > 0) OR _KEYDOWN(KEY_RIGHT_ARROW) OR _KEYDOWN(KEY_UPPER_D) OR _KEYDOWN(KEY_LOWER_D)
-    UserInputUp = (mouseMovement.y < 0) OR _KEYDOWN(KEY_UP_ARROW) OR _KEYDOWN(KEY_UPPER_W) OR _KEYDOWN(KEY_LOWER_W)
-    UserInputDown = (mouseMovement.y > 0) OR _KEYDOWN(KEY_DOWN_ARROW) OR _KEYDOWN(KEY_UPPER_S) OR _KEYDOWN(KEY_LOWER_S)
-    UserInputFire = mouseFire OR _KEYDOWN(KEY_SPACE) OR _KEYDOWN(KEY_LEFT_CONTROL) OR _KEYDOWN(KEY_RIGHT_CONTROL) OR _KEYDOWN(KEY_LEFT_ALT) OR _KEYDOWN(KEY_RIGHT_ALT)
+    UserInputLeft = (mouseMovement.x < 0) OR _KEYDOWN(_KEY_LEFT) OR _KEYDOWN(KEY_UPPER_A) OR _KEYDOWN(KEY_LOWER_A)
+    UserInputRight = (mouseMovement.x > 0) OR _KEYDOWN(_KEY_RIGHT) OR _KEYDOWN(KEY_UPPER_D) OR _KEYDOWN(KEY_LOWER_D)
+    UserInputUp = (mouseMovement.y < 0) OR _KEYDOWN(_KEY_UP) OR _KEYDOWN(KEY_UPPER_W) OR _KEYDOWN(KEY_LOWER_W)
+    UserInputDown = (mouseMovement.y > 0) OR _KEYDOWN(_KEY_DOWN) OR _KEYDOWN(KEY_UPPER_S) OR _KEYDOWN(KEY_LOWER_S)
+    UserInputFire = mouseFire OR _KEYDOWN(KEY_SPACE) OR _KEYDOWN(_KEY_LCTRL) OR _KEYDOWN(_KEY_RCTRL) OR _KEYDOWN(_KEY_LALT) OR _KEYDOWN(_KEY_RALT)
 
-    GetInput = _KEYDOWN(KEY_ESCAPE)
+    GetInput = _KEYDOWN(_KEY_ESC)
 END FUNCTION
 
 
 ' Finds a non-active hero missile in the HeroMissile array and initializes it
-' Return TRUE if it was successful
+' Return _TRUE if it was successful
 FUNCTION CreateHeroMissile%% (x AS INTEGER, y AS INTEGER)
     DIM i AS INTEGER
 
     FOR i = 0 TO MAX_HERO_MISSILES - 1
         IF NOT HeroMissile(i).isActive THEN
-            HeroMissile(i).isActive = TRUE
+            HeroMissile(i).isActive = _TRUE
             HeroMissile(i).position.x = x
             HeroMissile(i).position.y = y
             HeroMissile(i).velocity.x = 0
             HeroMissile(i).velocity.y = -HERO_MISSILE_VELOCITY
-            HeroMissile(i).bDraw = TRUE
-            CreateHeroMissile = TRUE
+            HeroMissile(i).bDraw = _TRUE
+            CreateHeroMissile = _TRUE
             EXIT FUNCTION
         END IF
     NEXT
 
-    CreateHeroMissile = FALSE
+    CreateHeroMissile = _FALSE
 END FUNCTION
 
 
@@ -410,14 +410,14 @@ SUB CreateAlien
 
     FOR i = 0 TO MAX_ALIENS - 1
         IF NOT Alien(i).isActive THEN
-            Alien(i).isActive = TRUE
+            Alien(i).isActive = _TRUE
             Alien(i).position.x = RND * (SCREEN_WIDTH - Alien(i).size.x)
             Alien(i).position.y = -Alien(i).size.y
             Alien(i).velocity.x = RND * ALIEN_X_VELOCITY + 1
             Alien(i).velocity.y = RND * ALIEN_Y_VELOCITY + 1
             Alien(i).objSpec1 = ALIEN_MOVE_TIME_BASE + RND * ALIEN_MOVE_TIME_VAR
             Alien(i).objSpec2 = 0 ' ability to fire immediately
-            Alien(i).bDraw = TRUE
+            Alien(i).bDraw = _TRUE
             EXIT FOR
         END IF
     NEXT
@@ -431,12 +431,12 @@ SUB CreateAlienMissile (x AS INTEGER, y AS INTEGER)
 
     FOR i = 0 TO MAX_ALIEN_MISSILES - 1
         IF NOT AlienMissile(i).isActive THEN
-            AlienMissile(i).isActive = TRUE
+            AlienMissile(i).isActive = _TRUE
             AlienMissile(i).position.x = x
             AlienMissile(i).position.y = y
             AlienMissile(i).velocity.x = 0
             AlienMissile(i).velocity.y = ALIEN_MISSILE_VELOCITY
-            AlienMissile(i).bDraw = TRUE
+            AlienMissile(i).bDraw = _TRUE
             EXIT FOR
         END IF
     NEXT
@@ -449,11 +449,11 @@ SUB CreateExplosion (position AS Vector2FType)
 
     FOR i = 0 TO MAX_EXPLOSIONS - 1
         IF NOT Explosion(i).isActive THEN
-            Explosion(i).isActive = TRUE
+            Explosion(i).isActive = _TRUE
             Explosion(i).position = position
             Explosion(i).objSpec1 = 0 ' current explosion bitmap
             Explosion(i).objSpec2 = EXPLOSION_FRAME_REPEAT_COUNT
-            Explosion(i).bDraw = TRUE
+            Explosion(i).bDraw = _TRUE
             EXIT FOR
         END IF
     NEXT
@@ -465,9 +465,9 @@ SUB InitializeHUD
     DIM i AS INTEGER
 
     ' Load the HUD bitmap
-    HUDBitmap(0) = Graphics_LoadImage("dat/gfx/hud0.pcx", FALSE, TRUE, "HQ2XA", -1)
+    HUDBitmap(0) = Graphics_LoadImage("dat/gfx/hud0.pcx", _FALSE, _TRUE, "HQ2XA", -1)
     _ASSERT HUDBitmap(0) < -1
-    HUDBitmap(1) = Graphics_LoadImage("dat/gfx/hud1.pcx", FALSE, TRUE, "HQ2XA", -1)
+    HUDBitmap(1) = Graphics_LoadImage("dat/gfx/hud1.pcx", _FALSE, _TRUE, "HQ2XA", -1)
     _ASSERT HUDBitmap(1) < -1
 
     HUDSize.x = _WIDTH(HUDBitmap(0))
@@ -475,7 +475,7 @@ SUB InitializeHUD
 
     ' Load the digit bitmaps
     FOR i = 0 TO 9
-        HUDDigitBitmap(i) = Graphics_LoadImage("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", FALSE, TRUE, "HQ2XA", -1)
+        HUDDigitBitmap(i) = Graphics_LoadImage("dat/gfx/" + LTRIM$(STR$(i)) + ".pcx", _FALSE, _TRUE, "HQ2XA", -1)
         _ASSERT HUDDigitBitmap(i) < -1
     NEXT
     HUDDigitSize.x = _WIDTH(HUDDigitBitmap(0))
@@ -524,11 +524,11 @@ SUB InitializeMap
     DIM AS LONG x, y, c
 
     ' Load the background tiles
-    TileBitmap(0) = Graphics_LoadImage("dat/gfx/stars1.pcx", FALSE, TRUE, STRING_EMPTY, -1)
+    TileBitmap(0) = Graphics_LoadImage("dat/gfx/stars1.pcx", _FALSE, _TRUE, _STR_EMPTY, -1)
     _ASSERT TileBitmap(0) < -1
-    TileBitmap(1) = Graphics_LoadImage("dat/gfx/stars2.pcx", FALSE, TRUE, STRING_EMPTY, -1)
+    TileBitmap(1) = Graphics_LoadImage("dat/gfx/stars2.pcx", _FALSE, _TRUE, _STR_EMPTY, -1)
     _ASSERT TileBitmap(1) < -1
-    TileBitmap(2) = Graphics_LoadImage("dat/gfx/earth.pcx", FALSE, TRUE, STRING_EMPTY, -1)
+    TileBitmap(2) = Graphics_LoadImage("dat/gfx/earth.pcx", _FALSE, _TRUE, _STR_EMPTY, -1)
     _ASSERT TileBitmap(2) < -1
 
     TileMapSize.x = SCREEN_WIDTH \ _WIDTH(TileBitmap(0))
@@ -655,7 +655,7 @@ SUB FinalizeSound
     _SNDCLOSE ExplosionSound
     _SNDCLOSE LaserSound
 
-    PlayMIDIFile STRING_EMPTY ' This is will unload whatever MIDI data is there in memory
+    PlayMIDIFile _STR_EMPTY ' This is will unload whatever MIDI data is there in memory
 END SUB
 
 
@@ -726,7 +726,7 @@ SUB NewHighScore (NewScore AS LONG)
     i = i + 1
 
     ' Blank out text of correct slot
-    HighScore(i).text = STRING_EMPTY
+    HighScore(i).text = _STR_EMPTY
     HighScore(i).score = NewScore
 
 
@@ -747,7 +747,7 @@ SUB NewHighScore (NewScore AS LONG)
         IF k >= KEY_SPACE AND k <= KEY_TILDE AND sPos < HIGH_SCORE_TEXT_LEN THEN
             sPos = sPos + 1
             HighScore(i).text = HighScore(i).text + CHR$(k)
-        ELSEIF k = KEY_BACKSPACE AND sPos > 0 THEN
+        ELSEIF k = _KEY_BACKSPACE AND sPos > 0 THEN
             sPos = sPos - 1
             HighScore(i).text = LEFT$(HighScore(i).text, sPos)
         END IF
@@ -757,7 +757,7 @@ SUB NewHighScore (NewScore AS LONG)
         _DISPLAY
 
         IF NOT NoLimit THEN _LIMIT UPDATES_PER_SECOND
-    LOOP WHILE k <> KEY_ENTER
+    LOOP WHILE k <> _KEY_ENTER
 END SUB
 
 
@@ -770,7 +770,7 @@ SUB DisplayTitlePage
     CLS , 0 ' black with no alpha
 
     ' First page of stuff
-    DIM tmp AS LONG: tmp = Graphics_LoadImage("dat/gfx/title.pcx", FALSE, FALSE, "HQ2XA", -1)
+    DIM tmp AS LONG: tmp = Graphics_LoadImage("dat/gfx/title.pcx", _FALSE, _FALSE, "HQ2XA", -1)
     _ASSERT tmp < -1
 
     ' Stretch bmp to fill the screen
@@ -780,7 +780,7 @@ SUB DisplayTitlePage
     _FREEIMAGE tmp
 
     ' Fade in
-    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100
+    Graphics_FadeScreen _TRUE, UPDATES_PER_SECOND * 2, 100
 END SUB
 
 
@@ -793,8 +793,8 @@ SUB DisplayIntroCredits
     DrawStringCenter "Coriolis Group Books", 192, BGRA_RED
     DrawStringCenter "Presents", 208, BGRA_RED
 
-    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+    Graphics_FadeScreen _TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    Graphics_FadeScreen _FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 
     ' Clear the screen
     CLS , 0 ' black with no alpha
@@ -804,8 +804,8 @@ SUB DisplayIntroCredits
     DrawStringCenter "Dave Roberts", 192, BGRA_RED
     DrawStringCenter "Production", 208, BGRA_RED
 
-    Graphics_FadeScreen TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
-    Graphics_FadeScreen FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
+    Graphics_FadeScreen _TRUE, UPDATES_PER_SECOND * 2, 100 ' fade in
+    Graphics_FadeScreen _FALSE, UPDATES_PER_SECOND * 2, 100 ' fade out
 END SUB
 
 
@@ -921,7 +921,7 @@ SUB MoveSprites (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS 
             UpdateSprite HeroMissile(i)
             ' Stop drawing when it's off screen
             IF HeroMissile(i).position.y < -(HeroMissile(i).size.y + HeroMissile(i).objSpec2) THEN
-                HeroMissile(i).bDraw = FALSE
+                HeroMissile(i).bDraw = _FALSE
             END IF
         END IF
     NEXT
@@ -931,7 +931,7 @@ SUB MoveSprites (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS 
         IF CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_LEFT, Hero.position.y + HERO_GUN_OFFSET_UP) AND CreateHeroMissile(Hero.position.x + HERO_GUN_OFFSET_RIGHT, Hero.position.y + HERO_GUN_OFFSET_UP) THEN
             _SNDPLAYCOPY LaserSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
         END IF
-        AllowHeroFire = FALSE
+        AllowHeroFire = _FALSE
     END IF
 
     ' Update alien missiles
@@ -941,7 +941,7 @@ SUB MoveSprites (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS 
             UpdateSprite AlienMissile(i)
             ' Stop drawing when it's off screen
             IF AlienMissile(i).position.y > (SCREEN_HEIGHT + AlienMissile(i).size.y + AlienMissile(i).objSpec2) THEN
-                AlienMissile(i).bDraw = FALSE
+                AlienMissile(i).bDraw = _FALSE
             END IF
         END IF
     NEXT
@@ -1001,7 +1001,7 @@ SUB MoveSprites (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS 
             IF Explosion(i).objSpec2 = 0 THEN
                 Explosion(i).objSpec1 = Explosion(i).objSpec1 + 1
                 Explosion(i).objSpec2 = EXPLOSION_FRAME_REPEAT_COUNT
-                IF Explosion(i).objSpec1 >= MAX_EXPLOSION_BITMAPS THEN Explosion(i).bDraw = FALSE
+                IF Explosion(i).objSpec1 >= MAX_EXPLOSION_BITMAPS THEN Explosion(i).bDraw = _FALSE
             ELSE
                 Explosion(i).objSpec2 = Explosion(i).objSpec2 - 1
             END IF
@@ -1031,9 +1031,9 @@ SUB CheckCollisions
         GetRectangle Hero.position, Hero.size, r1
         GetRectangle Alien(i).position, Alien(i).size, r2
         IF Hero.bDraw AND Alien(i).bDraw AND RectanglesCollide(r1, r2) THEN
-            Hero.bDraw = FALSE
+            Hero.bDraw = _FALSE
             CreateExplosion Hero.position
-            Alien(i).bDraw = FALSE
+            Alien(i).bDraw = _FALSE
             CreateExplosion Alien(i).position
             _SNDPLAYCOPY ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
         END IF
@@ -1048,8 +1048,8 @@ SUB CheckCollisions
             GetRectangle Alien(i).position, Alien(i).size, r1
             GetRectangle HeroMissile(j).position, HeroMissile(j).size, r2
             IF HeroMissile(j).bDraw AND RectanglesCollide(r1, r2) THEN
-                Alien(i).bDraw = FALSE
-                HeroMissile(j).bDraw = FALSE
+                Alien(i).bDraw = _FALSE
+                HeroMissile(j).bDraw = _FALSE
                 CreateExplosion Alien(i).position
                 Score = Score + POINTS_PER_ALIEN
                 _SNDPLAYCOPY ExplosionSound, , (2 * (Alien(i).position.x + Alien(i).size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
@@ -1064,9 +1064,9 @@ SUB CheckCollisions
         GetRectangle Hero.position, Hero.size, r1
         GetRectangle AlienMissile(i).position, AlienMissile(i).size, r2
         IF AlienMissile(i).bDraw AND Hero.bDraw AND RectanglesCollide(r1, r2) THEN
-            AlienMissile(i).bDraw = FALSE ' destroy missile in any case
+            AlienMissile(i).bDraw = _FALSE ' destroy missile in any case
             IF HeroShields <= 0 THEN
-                Hero.bDraw = FALSE
+                Hero.bDraw = _FALSE
                 CreateExplosion Hero.position
                 _SNDPLAYCOPY ExplosionSound, , (2 * (Hero.position.x + Hero.size.x / 2) - SCREEN_WIDTH + 1) / (SCREEN_WIDTH - 1)
                 EXIT FOR ' hero is destroyed
@@ -1086,12 +1086,12 @@ FUNCTION EraseSprites%%
     DIM i AS INTEGER
     STATIC DeathCounter AS _UNSIGNED INTEGER
 
-    EraseSprites = FALSE
+    EraseSprites = _FALSE
 
     ' Do player and possibly deactivate
     IF Hero.isActive THEN
         IF NOT Hero.bDraw THEN
-            Hero.isActive = FALSE
+            Hero.isActive = _FALSE
             DeathCounter = DEATH_DELAY
         END IF
     END IF
@@ -1100,7 +1100,7 @@ FUNCTION EraseSprites%%
     FOR i = 0 TO MAX_HERO_MISSILES - 1
         ' Deactivate missile if we aren't going to draw or erase it anymore
         IF NOT HeroMissile(i).bDraw THEN
-            HeroMissile(i).isActive = FALSE
+            HeroMissile(i).isActive = _FALSE
         END IF
     NEXT
 
@@ -1108,7 +1108,7 @@ FUNCTION EraseSprites%%
     FOR i = 0 TO MAX_ALIENS - 1
         ' Deactive alien if it's been destroyed
         IF NOT Alien(i).bDraw THEN
-            Alien(i).isActive = FALSE
+            Alien(i).isActive = _FALSE
         END IF
     NEXT
 
@@ -1116,7 +1116,7 @@ FUNCTION EraseSprites%%
     FOR i = 0 TO MAX_ALIEN_MISSILES - 1
         ' deactivate missile if we aren't going to draw or erase it anymore
         IF NOT AlienMissile(i).bDraw THEN
-            AlienMissile(i).isActive = FALSE
+            AlienMissile(i).isActive = _FALSE
         END IF
     NEXT
 
@@ -1124,14 +1124,14 @@ FUNCTION EraseSprites%%
     FOR i = 0 TO MAX_EXPLOSIONS - 1
         ' Deactivate if explosion has run its course
         IF NOT Explosion(i).bDraw THEN
-            Explosion(i).isActive = FALSE
+            Explosion(i).isActive = _FALSE
         END IF
     NEXT
 
     ' Hero has died - signal game over after brief delay
     IF NOT Hero.isActive THEN
         IF DeathCounter = 0 THEN
-            EraseSprites = TRUE
+            EraseSprites = _TRUE
         ELSE
             DeathCounter = DeathCounter - 1
         END IF
@@ -1188,7 +1188,7 @@ SUB DrawSprites
     IF GunBlinkCounter = 0 THEN
         GunBlinkState = 1 - GunBlinkState ' Flip it to other state
         GunBlinkCounter = GUN_BLINK_RATE
-        AllowHeroFire = TRUE
+        AllowHeroFire = _TRUE
     ELSE
         GunBlinkCounter = GunBlinkCounter - 1
     END IF
@@ -1264,7 +1264,7 @@ SUB RunGame
     PlayMIDIFile "dat/sfx/mus/alienmain.mid"
 
     ' Initialize some variables and enter main animation loop
-    GameOver = FALSE
+    GameOver = _FALSE
 
     ' Main game loop
     DO
