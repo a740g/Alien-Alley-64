@@ -13,10 +13,13 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
 '-----------------------------------------------------------------------------------------------------------------------
-'$INCLUDE:'include/TimeOps.bi'
+$LET TOOLBOX64_STRICT = TRUE
+'$INCLUDE:'include/Core/TimeOps.bi'
 '$INCLUDE:'include/Math/Math.bi'
-'$INCLUDE:'include/StringOps.bi'
-'$INCLUDE:'include/GraphicOps.bi'
+'$INCLUDE:'include/Math/Vector2f.bi'
+'$INCLUDE:'include/String/StringOps.bi'
+'$INCLUDE:'include/Graphics/Graphics2D.bi'
+'$INCLUDE:'include/IO/InputManager.bi'
 '-----------------------------------------------------------------------------------------------------------------------
 
 '-----------------------------------------------------------------------------------------------------------------------
@@ -100,16 +103,16 @@ CONST MAP_SCROLL_STEP_FAST = 2
 ' USER DEFINED TYPES
 '-----------------------------------------------------------------------------------------------------------------------
 TYPE Rectangle2DType
-    a AS Vector2FType
-    b AS Vector2FType
+    a AS Vector2f
+    b AS Vector2f
 END TYPE
 
 TYPE SpriteType
     isActive AS _BYTE ' is this sprite active / in use?
-    size AS Vector2FType ' size of the sprite
+    size AS Vector2f ' size of the sprite
     boundary AS Rectangle2DType ' sprite should not leave this area
-    position AS Vector2FType ' (left, top) position of the sprite on the 2D plane
-    velocity AS Vector2FType ' velocity of the sprite
+    position AS Vector2f ' (left, top) position of the sprite on the 2D plane
+    velocity AS Vector2f ' velocity of the sprite
     bDraw AS _BYTE ' do we need to draw the sprite?
     objSpec1 AS LONG ' special data 1
     objSpec2 AS LONG ' special data 2
@@ -133,8 +136,8 @@ DIM SHARED Alien(0 TO MAX_ALIENS - 1) AS SpriteType
 DIM SHARED HeroMissile(0 TO MAX_HERO_MISSILES - 1) AS SpriteType
 DIM SHARED AlienMissile(0 TO MAX_ALIEN_MISSILES - 1) AS SpriteType
 DIM SHARED Explosion(0 TO MAX_EXPLOSIONS - 1) AS SpriteType
-DIM SHARED HUDSize AS Vector2FType
-DIM SHARED HUDDigitSize AS Vector2FType
+DIM SHARED HUDSize AS Vector2f
+DIM SHARED HUDDigitSize AS Vector2f
 DIM SHARED AlienGenCounter AS INTEGER
 DIM SHARED GunBlinkCounter AS INTEGER
 DIM SHARED GunBlinkState AS _BYTE
@@ -153,7 +156,7 @@ DIM SHARED HUDBitmap(0 TO 1) AS LONG
 DIM SHARED HUDDigitBitmap(0 TO 9) AS LONG
 REDIM SHARED TileMap(0 TO 0, 0 TO 0) AS LONG ' bitmap for each tile position
 REDIM SHARED TileMapY(0 TO 0) AS LONG ' the y postion of the tile row
-DIM SHARED TileMapSize AS Vector2FType
+DIM SHARED TileMapSize AS Vector2f
 DIM SHARED ShowFPS AS _BYTE
 DIM SHARED NoLimit AS _BYTE
 '-----------------------------------------------------------------------------------------------------------------------
@@ -162,7 +165,6 @@ DIM SHARED NoLimit AS _BYTE
 ' PROGRAM ENTRY POINT - Main program loop. Inits the program, draws intro screens and title pages,
 ' and waits for user to hit keystroke to indicated what they want to do
 '-----------------------------------------------------------------------------------------------------------------------
-DIM Quit AS _BYTE
 DIM DrawTitle AS _BYTE
 DIM k AS _UNSIGNED LONG
 
@@ -176,7 +178,7 @@ DisplayIntroCredits
 ClearInput
 
 ' Main menu loop
-DO WHILE NOT Quit
+DO
     ' Draw title page (only if required)
     IF DrawTitle THEN
         DisplayTitlePage
@@ -189,7 +191,7 @@ DO WHILE NOT Quit
     ' Check what key was press and action it
     SELECT CASE k
         CASE _KEY_ESC, KEY_LOWER_Q, KEY_UPPER_Q
-            Quit = _TRUE
+            EXIT DO
 
         CASE KEY_LOWER_K, KEY_UPPER_K, KEY_LOWER_M, KEY_UPPER_M, KEY_LOWER_J, KEY_UPPER_J, _KEY_ENTER
             RunGame
@@ -227,7 +229,7 @@ SYSTEM
 '-----------------------------------------------------------------------------------------------------------------------
 
 ' Calculates the bounding rectangle for a sprite given its position & size
-SUB GetRectangle (position AS Vector2FType, size AS Vector2FType, r AS Rectangle2DType)
+SUB GetRectangle (position AS Vector2f, size AS Vector2f, r AS Rectangle2DType)
     r.a.x = position.x
     r.a.y = position.y
     r.b.x = position.x + size.x - 1
@@ -237,7 +239,7 @@ END SUB
 
 ' Collision testing routine. This is a simple bounding box collision test
 FUNCTION RectanglesCollide%% (r1 AS Rectangle2DType, r2 AS Rectangle2DType)
-    RectanglesCollide = NOT (r1.a.x > r2.b.x OR r2.a.x > r1.b.x OR r1.a.y > r2.b.y OR r2.a.y > r1.b.y)
+    RectanglesCollide = NOT (r1.a.x > r2.b.x _ORELSE r2.a.x > r1.b.x _ORELSE r1.a.y > r2.b.y _ORELSE r2.a.y > r1.b.y)
 END FUNCTION
 
 
@@ -361,7 +363,7 @@ END SUB
 ' Return _TRUE if ESC was pressed
 ' TODO: Add game controller support
 FUNCTION GetInput%% (UserInputUp AS _BYTE, UserInputDown AS _BYTE, UserInputLeft AS _BYTE, UserInputRight AS _BYTE, UserInputFire AS _BYTE)
-    DIM mouseMovement AS Vector2FType
+    DIM mouseMovement AS Vector2f
     DIM mouseFire AS _BYTE
 
     ' Collect and aggregate mouse input
@@ -444,7 +446,7 @@ END SUB
 
 
 ' Starts an explosion occuring at the appropriate x and y coordinates.
-SUB CreateExplosion (position AS Vector2FType)
+SUB CreateExplosion (position AS Vector2f)
     DIM i AS INTEGER
 
     FOR i = 0 TO MAX_EXPLOSIONS - 1
@@ -1312,7 +1314,8 @@ END SUB
 '-----------------------------------------------------------------------------------------------------------------------
 ' HEADER FILES
 '-----------------------------------------------------------------------------------------------------------------------
-'$INCLUDE:'include/StringOps.bas'
-'$INCLUDE:'include/GraphicOps.bas'
+'$INCLUDE:'include/String/StringOps.bas'
+'$INCLUDE:'include/Graphics/Graphics2D.bas'
+'$INCLUDE:'include/IO/InputManager.bas'
 '-----------------------------------------------------------------------------------------------------------------------
 '-----------------------------------------------------------------------------------------------------------------------
